@@ -1,0 +1,41 @@
+{
+  "scaffolds": [
+    {
+      "name": "CaRhGC",
+      "family": "RhGC",
+      "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAN",
+      "starting_lambda_nm": 527,
+      "target_phenotypes": ["spectral_tuning", "cGMP_activity"],
+      "assay_architectures": ["biochemical", "growth_selection"],
+      "protected_positions": [5, 12],
+      "mutable_positions": [
+        {
+          "position": 8,
+          "allowed": ["F", "Y", "W"],
+          "reason": "retinal_pocket spectral_tuning"
+        },
+        {
+          "position": 19,
+          "allowed": ["A", "S"],
+          "reason": "helix_face expression"
+        }
+      ]
+    },
+    {
+      "name": "ChR2",
+      "family": "ChR",
+      "sequence": "MDYGGALSAVGRELLFVTNPVVVNGSVLVPEDQCYCAGWIESR",
+      "starting_lambda_nm": 470,
+      "target_phenotypes": ["spectral_tuning", "photocurrent"],
+      "assay_architectures": ["growth_selection", "patch_clamp"],
+      "protected_positions": [10],
+      "mutable_positions": [
+        {
+          "position": 15,
+          "allowed": ["F", "Y"],
+          "reason": "retinal_pocket spectral_tuning"
+        }
+      ]
+    }
+  ]
+}
