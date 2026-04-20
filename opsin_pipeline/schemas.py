@@ -60,7 +60,11 @@ class Candidate:
         return ";".join(m.label for m in self.mutations)
 
     @property
+    def position_key(self) -> str:
+        positions = ",".join(str(m.position) for m in self.mutations)
+        return f"{self.scaffold_name}:{positions}"
+
+    @property
     def reason_summary(self) -> str:
         reasons = [m.reason for m in self.mutations if m.reason]
         return "; ".join(reasons)
-

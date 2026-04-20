@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .generate import generate_single_mutants
+from .generate import generate_candidates
 from .ingest import load_scaffolds
 from .position_map import apply_position_map_to_scaffolds, write_draft_position_map
 from .report import write_candidate_csv, write_decision_report
@@ -20,6 +20,9 @@ def main() -> None:
     run_parser.add_argument("--target-family", default=None)
     run_parser.add_argument("--target-phenotype", default=None)
     run_parser.add_argument("--top", type=int, default=10)
+    run_parser.add_argument("--max-mutations", type=int, default=1)
+    run_parser.add_argument("--per-scaffold-cap", type=int, default=None)
+    run_parser.add_argument("--per-position-cap", type=int, default=None)
 
     draft_parser = subparsers.add_parser("draft-position-map", help="Write a draft review CSV")
     draft_parser.add_argument("--scaffolds", required=True, help="Path to scaffold JSON")
@@ -49,12 +52,14 @@ def main() -> None:
         parser.error("a command is required")
 
     scaffolds = load_scaffolds(args.scaffolds)
-    candidates = generate_single_mutants(scaffolds)
+    candidates = generate_candidates(scaffolds, max_mutations=args.max_mutations)
     ranked = rank_candidates(
         candidates,
         scaffolds,
         target_family=args.target_family,
         target_phenotype=args.target_phenotype,
+        per_scaffold_cap=args.per_scaffold_cap,
+        per_position_cap=args.per_position_cap,
     )
 
     out_dir = Path(args.out)

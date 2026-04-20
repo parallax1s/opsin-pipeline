@@ -17,7 +17,9 @@ PYTHONPATH=. python3 -m opsin_pipeline.cli run \
   --scaffolds opsin_pipeline/configs/example_scaffolds.json \
   --out opsin_pipeline/out/example \
   --target-family RhGC \
-  --target-phenotype spectral_tuning
+  --target-phenotype spectral_tuning \
+  --max-mutations 2 \
+  --per-scaffold-cap 20
 ```
 
 Outputs:
@@ -71,5 +73,7 @@ Candidate generation should use the reviewed scaffold JSON, not the seed file.
 - assay-readiness tag (`growth_selection` or `biochemical`)
 - small mutation-count penalty
 - protected-residue violation penalty
+- optional multi-mutant generation (`--max-mutations`)
+- optional diversity caps (`--per-scaffold-cap`, `--per-position-cap`)
 
 This score is a triage heuristic. Treat it as a reproducible queue for deeper structure, physics, and wet-lab validation.
