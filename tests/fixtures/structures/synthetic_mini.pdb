@@ -1,0 +1,43 @@
+HEADER    SYNTHETIC FIXTURE                      2026-04-21   SYN1
+TITLE     HAND-CRAFTED PDB WITH 20-CARBON RETINAL ANALOG AND 8 CA ATOMS
+REMARK    DESIGNED FOR UNIT TESTS — see tests/test_pdb_parser.py and pocket tests
+REMARK    RETINAL CARBONS LIE ON Y=0,Z=0 AT X=0..19; RESIDUE CA DISTANCES:
+REMARK      A 1 ALA CA -> 2.0 A (strong)
+REMARK      A 2 PHE CA -> 2.5 A (strong)
+REMARK      A 3 TYR CA -> 3.5 A (strong)
+REMARK      A 4 LYS CA -> 4.5 A (medium)
+REMARK      A 5 TRP CA -> 5.0 A (medium)
+REMARK      A 6 VAL CA -> 6.0 A (none)
+REMARK      A 7 SER CA -> 7.0 A (none)
+REMARK      A 8 GLY CA -> 10.0 A (none)
+ATOM      1  CA  ALA A   1       2.000   2.000   0.000  1.00 20.00           C
+ATOM      2  CA  PHE A   2       5.000   2.500   0.000  1.00 20.00           C
+ATOM      3  CA  TYR A   3      10.000   3.500   0.000  1.00 20.00           C
+ATOM      4  CA  LYS A   4       3.000   4.500   0.000  1.00 20.00           C
+ATOM      5  CA  TRP A   5      12.000   5.000   0.000  1.00 20.00           C
+ATOM      6  CA  VAL A   6       4.000   6.000   0.000  1.00 20.00           C
+ATOM      7  CA  SER A   7      15.000   7.000   0.000  1.00 20.00           C
+ATOM      8  CA  GLY A   8       1.000  10.000   0.000  1.00 20.00           C
+ATOM      9  H   SER A   7      15.500   7.500   0.500  1.00 20.00           H
+HETATM   10  C1  RET A 101       0.000   0.000   0.000  1.00 30.00           C
+HETATM   11  C2  RET A 101       1.000   0.000   0.000  1.00 30.00           C
+HETATM   12  C3  RET A 101       2.000   0.000   0.000  1.00 30.00           C
+HETATM   13  C4  RET A 101       3.000   0.000   0.000  1.00 30.00           C
+HETATM   14  C5  RET A 101       4.000   0.000   0.000  1.00 30.00           C
+HETATM   15  C6  RET A 101       5.000   0.000   0.000  1.00 30.00           C
+HETATM   16  C7  RET A 101       6.000   0.000   0.000  1.00 30.00           C
+HETATM   17  C8  RET A 101       7.000   0.000   0.000  1.00 30.00           C
+HETATM   18  C9  RET A 101       8.000   0.000   0.000  1.00 30.00           C
+HETATM   19  C10 RET A 101       9.000   0.000   0.000  1.00 30.00           C
+HETATM   20  C11 RET A 101      10.000   0.000   0.000  1.00 30.00           C
+HETATM   21  C12 RET A 101      11.000   0.000   0.000  1.00 30.00           C
+HETATM   22  C13 RET A 101      12.000   0.000   0.000  1.00 30.00           C
+HETATM   23  C14 RET A 101      13.000   0.000   0.000  1.00 30.00           C
+HETATM   24  C15 RET A 101      14.000   0.000   0.000  1.00 30.00           C
+HETATM   25  C16 RET A 101      15.000   0.000   0.000  1.00 30.00           C
+HETATM   26  C17 RET A 101      16.000   0.000   0.000  1.00 30.00           C
+HETATM   27  C18 RET A 101      17.000   0.000   0.000  1.00 30.00           C
+HETATM   28  C19 RET A 101      18.000   0.000   0.000  1.00 30.00           C
+HETATM   29  C20 RET A 101      19.000   0.000   0.000  1.00 30.00           C
+HETATM   30  O1  GOL A 201      50.000  50.000  50.000  1.00 40.00           O
+END
