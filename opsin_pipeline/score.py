@@ -10,8 +10,6 @@ def rank_candidates(
     scaffolds: list[Scaffold],
     target_family: str | None = None,
     target_phenotype: str | None = None,
-    per_scaffold_cap: int | None = None,
-    per_position_cap: int | None = None,
 ) -> list[Candidate]:
     scaffold_by_name = {scaffold.name: scaffold for scaffold in scaffolds}
     scored = [
@@ -23,7 +21,7 @@ def rank_candidates(
         )
         for candidate in candidates
     ]
-    ranked = sorted(
+    return sorted(
         scored,
         key=lambda candidate: (
             candidate.scores.get("total", 0.0),
@@ -31,11 +29,6 @@ def rank_candidates(
             candidate.candidate_id,
         ),
         reverse=True,
-    )
-    return _apply_diversity_caps(
-        ranked,
-        per_scaffold_cap=per_scaffold_cap,
-        per_position_cap=per_position_cap,
     )
 
 
@@ -45,13 +38,15 @@ def score_candidate(
     target_family: str | None = None,
     target_phenotype: str | None = None,
 ) -> Candidate:
+    violation = any(m.position in scaffold.protected_positions for m in candidate.mutations)
+
     scores = {
         "family_match": 0.0,
         "phenotype_match": 0.0,
         "retinal_pocket": 0.0,
         "assay_readiness": 0.0,
         "mutation_penalty": -0.2 * len(candidate.mutations),
-        "protected_penalty": -5.0 if candidate.has_protected_violation else 0.0,
+        "protected_penalty": -5.0 if violation else 0.0,
     }
 
     if target_family and scaffold.family.lower() == target_family.lower():
@@ -66,11 +61,11 @@ def score_candidate(
         scores["assay_readiness"] = 1.0
 
     scores["total"] = round(sum(scores.values()), 3)
-    tags = sorted(set(candidate.tags + _score_tags(scores)))
-    return replace(candidate, scores=scores, tags=tags)
+    tags = sorted(set(candidate.tags + _score_tags(scores, violation)))
+    return replace(candidate, scores=scores, tags=tags, has_protected_violation=violation)
 
 
-def _score_tags(scores: dict[str, float]) -> list[str]:
+def _score_tags(scores: dict[str, float], violation: bool) -> list[str]:
     tags = []
     if scores.get("family_match", 0) > 0:
         tags.append("target_family")
@@ -78,30 +73,6 @@ def _score_tags(scores: dict[str, float]) -> list[str]:
         tags.append("target_phenotype")
     if scores.get("assay_readiness", 0) > 0:
         tags.append("assay_ready")
+    if violation:
+        tags.append("protected_violation")
     return tags
-
-
-def _apply_diversity_caps(
-    candidates: list[Candidate],
-    per_scaffold_cap: int | None = None,
-    per_position_cap: int | None = None,
-) -> list[Candidate]:
-    scaffold_counts: dict[str, int] = {}
-    position_counts: dict[str, int] = {}
-    selected: list[Candidate] = []
-    for candidate in candidates:
-        if per_scaffold_cap is not None:
-            if scaffold_counts.get(candidate.scaffold_name, 0) >= per_scaffold_cap:
-                continue
-        if per_position_cap is not None:
-            key = candidate.position_key
-            if position_counts.get(key, 0) >= per_position_cap:
-                continue
-        selected.append(candidate)
-        scaffold_counts[candidate.scaffold_name] = (
-            scaffold_counts.get(candidate.scaffold_name, 0) + 1
-        )
-        position_counts[candidate.position_key] = (
-            position_counts.get(candidate.position_key, 0) + 1
-        )
-    return selected
