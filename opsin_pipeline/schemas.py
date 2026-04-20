@@ -9,6 +9,8 @@ class MutablePosition:
     position: int
     allowed: list[str]
     reason: str = ""
+    distance_to_retinal: float | None = None  # populated from a pocket map when available
+    role: str | None = None                    # e.g. "schiff_base_linkage" for LYR
 
 
 @dataclass(frozen=True)
@@ -17,6 +19,8 @@ class Mutation:
     from_aa: str
     to_aa: str
     reason: str = ""
+    distance_to_retinal: float | None = None
+    role: str | None = None
 
     @property
     def label(self) -> str:
@@ -33,6 +37,7 @@ class Scaffold:
     protected_positions: set[int] = field(default_factory=set)
     mutable_positions: list[MutablePosition] = field(default_factory=list)
     starting_lambda_nm: float | None = None
+    pocket_map_path: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def residue_at(self, position: int) -> str:

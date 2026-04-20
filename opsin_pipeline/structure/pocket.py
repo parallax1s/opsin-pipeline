@@ -8,6 +8,7 @@ can consume.
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -50,7 +51,9 @@ class PocketResidue:
     closest_ligand_id: str
     closest_ligand_resnum: int
     band: str  # "strong" | "medium" | "none"
-    role: str | None = None  # "schiff_base_linkage" for LYR Lys center, else None
+    role: str | None = None                 # "schiff_base_linkage" for LYR Lys center
+    seq_index: int | None = None            # scaffold-numbered; only set when mapping applied
+    mapping_note: str | None = None         # e.g. "PDB K85 vs scaffold position 87 (K)"
 
 
 @dataclass(frozen=True)
@@ -242,3 +245,169 @@ def _sha256_file(path: str | Path) -> str:
     if not p.exists():
         return ""
     return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+# ---- JSON I/O ----
+
+def pocket_map_to_dict(pocket_map: PocketMap) -> dict:
+    return {
+        "scaffold_name": pocket_map.scaffold_name,
+        "pdb_path": pocket_map.pdb_path,
+        "pdb_sha256": pocket_map.pdb_sha256,
+        "pdb_chain": pocket_map.pdb_chain,
+        "cutoff_A": pocket_map.cutoff_A,
+        "thresholds_A": list(pocket_map.thresholds_A),
+        "ligand_matches": [
+            {
+                "res_name": m.res_name,
+                "chain": m.chain,
+                "res_num": m.res_num,
+                "ins_code": m.ins_code,
+                "heavy_atom_count": m.heavy_atom_count,
+                "matched_by": m.matched_by,
+            }
+            for m in pocket_map.ligand_matches
+        ],
+        "pocket_residues": [
+            {
+                "pdb_chain": r.pdb_chain,
+                "pdb_resnum": r.pdb_resnum,
+                "pdb_ins_code": r.pdb_ins_code,
+                "res_name_three": r.res_name_three,
+                "res_name_one": r.res_name_one,
+                "min_distance_A": r.min_distance_A,
+                "closest_ligand_atom": r.closest_ligand_atom,
+                "closest_ligand_id": r.closest_ligand_id,
+                "closest_ligand_resnum": r.closest_ligand_resnum,
+                "band": r.band,
+                "role": r.role,
+                "seq_index": r.seq_index,
+                "mapping_note": r.mapping_note,
+            }
+            for r in pocket_map.pocket_residues
+        ],
+    }
+
+
+def pocket_map_from_dict(data: dict) -> PocketMap:
+    ligand_matches = [
+        LigandMatch(
+            res_name=str(m["res_name"]),
+            chain=str(m["chain"]),
+            res_num=int(m["res_num"]),
+            ins_code=str(m.get("ins_code", "")),
+            heavy_atom_count=int(m["heavy_atom_count"]),
+            matched_by=str(m["matched_by"]),
+        )
+        for m in data.get("ligand_matches", [])
+    ]
+    pocket_residues = [
+        PocketResidue(
+            pdb_chain=str(r["pdb_chain"]),
+            pdb_resnum=int(r["pdb_resnum"]),
+            pdb_ins_code=str(r.get("pdb_ins_code", "")),
+            res_name_three=str(r["res_name_three"]),
+            res_name_one=str(r["res_name_one"]),
+            min_distance_A=float(r["min_distance_A"]),
+            closest_ligand_atom=str(r["closest_ligand_atom"]),
+            closest_ligand_id=str(r["closest_ligand_id"]),
+            closest_ligand_resnum=int(r["closest_ligand_resnum"]),
+            band=str(r["band"]),
+            role=r.get("role"),
+            seq_index=r.get("seq_index"),
+            mapping_note=r.get("mapping_note"),
+        )
+        for r in data.get("pocket_residues", [])
+    ]
+    thresholds = data.get("thresholds_A", [DEFAULT_STRONG_MAX_A, DEFAULT_MEDIUM_MAX_A])
+    return PocketMap(
+        scaffold_name=str(data["scaffold_name"]),
+        pdb_path=str(data.get("pdb_path", "")),
+        pdb_sha256=str(data.get("pdb_sha256", "")),
+        pdb_chain=str(data.get("pdb_chain", "")),
+        ligand_matches=ligand_matches,
+        pocket_residues=pocket_residues,
+        cutoff_A=float(data.get("cutoff_A", DEFAULT_CUTOFF_A)),
+        thresholds_A=(float(thresholds[0]), float(thresholds[1])),
+    )
+
+
+def write_pocket_map(pocket_map: PocketMap, path: str | Path) -> Path:
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(pocket_map_to_dict(pocket_map), indent=2) + "\n", encoding="utf-8")
+    return p
+
+
+def read_pocket_map(path: str | Path) -> PocketMap:
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    return pocket_map_from_dict(data)
+
+
+# ---- Mapping application (PDB numbering -> scaffold seq_index) ----
+
+def apply_offset_mapping(
+    pocket_map: PocketMap,
+    *,
+    offset: int,
+    scaffold_sequence: str | None = None,
+    strict: bool = False,
+) -> PocketMap:
+    """Return a copy with ``seq_index = pdb_resnum + offset`` on every residue.
+
+    If ``scaffold_sequence`` is provided, the residue's one-letter code is checked
+    against the scaffold at that index; mismatches set ``mapping_note`` and leave
+    ``seq_index`` populated, unless ``strict=True`` in which case a ValueError is
+    raised on the first mismatch.
+
+    Insertion codes are rejected: callers with insertion codes must use
+    ``apply_mapping_table`` instead.
+    """
+    new_residues: list[PocketResidue] = []
+    for r in pocket_map.pocket_residues:
+        if r.pdb_ins_code:
+            raise ValueError(
+                f"apply_offset_mapping cannot handle insertion codes "
+                f"(chain {r.pdb_chain} resnum {r.pdb_resnum}{r.pdb_ins_code}). "
+                "Use apply_mapping_table."
+            )
+        seq_index = r.pdb_resnum + offset
+        note: str | None = None
+        if scaffold_sequence is not None and 1 <= seq_index <= len(scaffold_sequence):
+            scaffold_aa = scaffold_sequence[seq_index - 1].upper()
+            if r.res_name_one.upper() != scaffold_aa and r.res_name_one != "X":
+                msg = (
+                    f"PDB chain {r.pdb_chain} resnum {r.pdb_resnum} is "
+                    f"{r.res_name_one} ({r.res_name_three}) but scaffold position "
+                    f"{seq_index} is {scaffold_aa}"
+                )
+                if strict:
+                    raise ValueError(msg)
+                note = msg
+        new_residues.append(
+            PocketResidue(
+                pdb_chain=r.pdb_chain,
+                pdb_resnum=r.pdb_resnum,
+                pdb_ins_code=r.pdb_ins_code,
+                res_name_three=r.res_name_three,
+                res_name_one=r.res_name_one,
+                min_distance_A=r.min_distance_A,
+                closest_ligand_atom=r.closest_ligand_atom,
+                closest_ligand_id=r.closest_ligand_id,
+                closest_ligand_resnum=r.closest_ligand_resnum,
+                band=r.band,
+                role=r.role,
+                seq_index=seq_index,
+                mapping_note=note,
+            )
+        )
+    return PocketMap(
+        scaffold_name=pocket_map.scaffold_name,
+        pdb_path=pocket_map.pdb_path,
+        pdb_sha256=pocket_map.pdb_sha256,
+        pdb_chain=pocket_map.pdb_chain,
+        ligand_matches=list(pocket_map.ligand_matches),
+        pocket_residues=new_residues,
+        cutoff_A=pocket_map.cutoff_A,
+        thresholds_A=pocket_map.thresholds_A,
+    )
