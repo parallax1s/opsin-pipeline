@@ -1,6 +1,6 @@
 # Structure-Grounded Pocket Parser — Spec
 
-Status: **draft (pre-implementation)** — lock before coding.
+Status: **approved (2026-04-21)** — clarification patches applied; ready to implement.
 
 ## 1. Motivation
 
@@ -142,14 +142,13 @@ HETATM `res_name` matches against a curated set. Initial list:
 | `A1C` | 13-cis retinal | |
 | `13M` | 13-cis retinal (alt) | |
 | `9CR` | 9-cis retinal | rhodopsin photocycle intermediates |
-| `BCR` | β-carotene | exclude — not retinal; listed for deny-list clarity |
 | `RET_A`, `RT0`, `RET2` | vendor/refinement variants | accept; regex `^RE[T0-9A-Z]$` as safety net |
 
 The whitelist is stored as a module constant, imported from `opsin_pipeline/structure/ligands.py`, and easy to extend. No silent expansion via heuristics — unknown HETATM codes are logged and ignored, not assumed to be retinal.
 
 ### 5.2 Deny-list (important)
 
-Rhodopsin structures routinely carry other heterogeneous residues that must **not** be treated as the pocket ligand: lipid tails (`PLM`, `CLR`, `PC1`, `POPC`, `OLC`), detergents (`OGA`, `LMT`, `LDA`, `LUT`), fusion-protein ligands (from T4L / BRIL cocrystals), crystallization buffers (`ACT`, `GOL`, `PEG`, `TRS`). The parser hard-ignores any HETATM not on the allow-list.
+Rhodopsin structures routinely carry other heterogeneous residues that must **not** be treated as the pocket ligand: β-carotene (`BCR` — C₄₀, similar-ish atom count to retinal but functionally distinct and a common false positive), lipid tails (`PLM`, `CLR`, `PC1`, `POPC`, `OLC`), detergents (`OGA`, `LMT`, `LDA`, `LUT`), fusion-protein ligands (from T4L / BRIL cocrystals), crystallization buffers (`ACT`, `GOL`, `PEG`, `TRS`). The parser hard-ignores any HETATM not on the allow-list.
 
 ### 5.3 `LYR` special case
 
@@ -165,6 +164,7 @@ Resolution: when we detect `LYR`, we split it. All atoms whose names match the L
 - Zero matched ligands across the whole file → **hard error**: `NoRetinalLigandError`, with the list of HETATM codes actually observed so the user can update the whitelist if needed.
 - Multiple matched ligands (common in oligomer asymmetric units) → **soft warning**. The parser picks a ligand deterministically: (a) if the caller passed `--pdb-chain X`, use the ligand on chain X; (b) else use the first ligand by (chain, resnum) sort order, and emit `LigandMatch` entries for all so the user can see what else was around.
 - Heavy-atom count out of range for retinal (retinal is C₂₀; allow 15–25 heavy atoms as a sanity check) → **hard error** unless `--allow-weird-ligand` is passed. Catches mis-whitelisted entries.
+- **`LYR` bypasses this check before splitting.** The combined Lys + retinal covalent residue has ~26 heavy atoms and would false-positive. The sanity check runs on the retinal-side atoms only (§5.3), after the split.
 
 ## 6. PDB numbering ↔ scaffold sequence numbering
 
@@ -188,6 +188,9 @@ This is the single most error-prone surface and the one the spec must nail down.
    - `--pdb-mapping path/to/mapping.csv`: explicit table with columns `pdb_chain, pdb_resnum, pdb_ins_code, seq_index`. One row per residue the caller wants mapped. Residues not in the mapping are emitted in PDB numbering and marked `review_needed=true`.
 3. **Verification.** Whichever method produced `seq_index`, the parser must check `scaffold.residue_at(seq_index) == pdb_amino_acid`. Any disagreement (e.g., crystal construct has `C128T` but scaffold has `C128`) is flagged: the pocket residue is still emitted, but `review_needed=true` and the mismatch recorded in a `mapping_note` field. Default behavior: **warn and continue**; with `--strict-mapping` the mismatch becomes a hard error.
 4. **No fallback to pairwise alignment in this chunk.** If the caller provides neither an offset nor a mapping, the parser emits PDB-numbered `PocketMap` only. The review workflow (§8) can still consume it — it just stays in PDB numbering.
+5. **Two output shapes, depending on mapping availability.**
+   - *With* an offset or mapping: pocket residues carry a scaffold `seq_index`, so they can be merged into the `draft-position-map` CSV as per §6.3.
+   - *Without* an offset or mapping: the parser emits **only** a PDB-numbered evidence file (`out/pocket/<scaffold>_pdb_numbered.csv`) with columns `pdb_chain, pdb_resnum, pdb_ins_code, aa_pdb, distance_to_retinal_A, pocket_band, ligand_id, mapping_note`. This file is **not** merged into a scaffold CSV and **cannot** feed `apply-position-map`. A mapping (offset or explicit table) must be added separately before the evidence can populate `seq_index`-keyed rows. The `pocket-annotate` step (§8.2) hard-errors rather than silently producing a scaffold CSV from unmapped evidence.
 
 ### 6.3 Emitting into the position-map CSV
 
@@ -235,7 +238,7 @@ Scaffolds that **do** have a pocket map always prefer the graded signal; the rea
 
 ### 7.4 What changes in `score_candidate`
 
-Two new score keys replace the single `retinal_pocket` key:
+Two new score keys replace the single `retinal_pocket` key (only when the graded toggle is on — see §7.5):
 
 ```
 scores["retinal_pocket_strong"]   # {0.0, 2.0}
@@ -243,6 +246,17 @@ scores["retinal_pocket_medium"]   # {0.0, 1.0}
 ```
 
 Using two keys instead of one preserves the transparency the score dict is designed for — a reader can see exactly which band contributed. `total` is the sum as before.
+
+### 7.5 Opt-in toggle: graded scoring stays off by default until calibration lands
+
+Parser evidence (§4–§6) and the `distance_to_retinal` plumbing through `schemas.py` / `ingest.py` / `generate.py` can land on `main` independently. The *scoring* change in §7.1–§7.4 is gated behind an opt-in flag:
+
+- CLI: `run --graded-pocket` (default **off**).
+- Programmatic: `rank_candidates(..., use_graded_pocket=False)` and `score_candidate(..., use_graded_pocket=False)`.
+
+When off, the existing reason-string rule is used unchanged, regardless of whether pocket data is present on the scaffold. When on, graded scoring takes over as described, falling back to the reason-string rule only for scaffolds that lack pocket data.
+
+This is deliberate. Scoring changes are load-bearing for every ranking the user produces, and the current (synthetic) calibration cannot demonstrate that graded > binary — its only useful mutations sit at the same position, so both rules score identically. The flag flips default-on in the same PR that lands the ≥20-mutation literature calibration set (§11), once the AUROC comparison actually justifies the change.
 
 ## 8. Integration with the existing workflow
 
@@ -262,16 +276,24 @@ python3 -m opsin_pipeline.cli pocket \
 
 Writes `PocketMap` JSON. Exits nonzero on hard errors per §5.4 and §6.2.
 
-### 8.2 Extension of `draft-position-map`
+### 8.2 Pocket annotation into the review workflow
+
+Two cases, keyed on whether the `PocketMap` has scaffold `seq_index` data (i.e. an offset or mapping was used when the pocket was parsed, per §6.2 rule 5).
+
+**Case A — mapped pocket evidence.** The existing draft workflow gains a new `pocket-annotate` step that merges pocket columns into an existing draft CSV:
 
 ```
-python3 -m opsin_pipeline.cli draft-position-map \
-  --scaffolds configs/real_scaffolds_reviewed.json \
-  --pocket-map out/pocket/BR.json \
-  --out out/review/position_map_draft.csv
+python3 -m opsin_pipeline.cli pocket-annotate \
+  --position-map out/review/position_map_draft.csv \
+  --pocket-map   out/pocket/BR.json \
+  --out          out/review/position_map_with_pocket.csv
 ```
 
-When `--pocket-map` is provided, the CSV draft is pre-annotated with the new columns (§6.3). Human review then proceeds as today.
+`pocket-annotate` writes the columns listed in §6.3 onto the matching scaffold rows. Human review then proceeds as today via `apply-position-map`.
+
+**Case B — unmapped pocket evidence.** If the `PocketMap` lacks `seq_index` data, `pocket-annotate` refuses to run and prints the path to the PDB-numbered evidence file (§6.2 rule 5). The user must supply an offset or mapping (usually by re-running `cli pocket` with `--pdb-offset` or `--pdb-mapping`) before the evidence can reach the scaffold CSV. **No silent partial annotation.**
+
+Note: this is a new subcommand, not a flag on `draft-position-map`. Keeping the two steps distinct avoids mixing unreviewed geometric evidence with the human-curated `mutable`/`protected` decisions.
 
 ### 8.3 Scaffold → Candidate path
 
@@ -290,9 +312,19 @@ At load time, `load_scaffolds` merges pocket distances from the referenced file 
 
 Load-time mismatch: if the pocket map references positions that aren't in `mutable_positions`, that's fine (the human curator decided not to mutate there). If `mutable_positions` references positions absent from the pocket map, those mutations score via the reason-string fallback (§7.3).
 
-### 8.4 Existing code unchanged
+### 8.4 Modules that change
 
-`generate.py`, `diversify.py`, `calibration.py`, `report.py` require no changes. The pocket data flows through the existing `MutablePosition` → `Mutation` → `Candidate` → `rank_candidates` path transparently.
+Distance evidence flows through `MutablePosition` → `Mutation` → `Candidate`, so several modules need small additive changes. All backward-compat: scaffolds without a pocket map produce identical output to today.
+
+- **`schemas.py`** — `MutablePosition` and `Mutation` gain `distance_to_retinal: float | None = None`. `MutablePosition` also gains `role: str | None = None` (used to record `schiff_base_linkage` per §12). `Candidate` is untouched; distances live on the mutations it already carries.
+- **`ingest.py`** — `load_scaffolds` reads an optional top-level `pocket_map_path` per scaffold, loads the referenced `PocketMap` JSON, and merges `distance_to_retinal` / `role` into each `MutablePosition` by position. Missing positions in the pocket map are allowed; mutations at those positions keep `distance_to_retinal=None`.
+- **`generate.py`** — propagates `distance_to_retinal` and `role` from each `MutablePosition` to the `Mutation` it produces. No change to enumeration logic, silent-skip rules, or `GenerationStats`.
+- **`score.py`** — see §7.4 and §7.5. New `use_graded_pocket` parameter on `score_candidate` and `rank_candidates`. New score keys `retinal_pocket_strong` / `retinal_pocket_medium` replace the single `retinal_pocket` key when the flag is on.
+- **`report.py`** — CSV gains a `distance_to_retinal_A` column (per-candidate min over its mutations' distances; blank when no data). Decision report adds a one-line "pocket signal: graded / legacy" marker so it is obvious which mode produced the numbers.
+- **`position_map.py`** — new `pocket-annotate` subcommand per §8.2. No changes to `draft-position-map` or `apply-position-map` defaults; pocket annotation is an explicit opt-in step.
+- **tests** — ~10 new tests across `test_pdb_parser.py`, `test_ligands.py`, `test_pocket_distance.py`, `test_score_graded_pocket.py`, `test_cli_pocket.py`. A handful of existing tests pick up the new optional fields but should not require logic changes.
+
+Unchanged: **`diversify.py`, `calibration.py`**. Neither reads pocket data; both operate on whatever score the scorer produced.
 
 ## 9. Failure modes — explicit table
 
@@ -371,14 +403,17 @@ Commitment: before merging the pocket parser to `main`, land a calibration set o
 
 If curating the calibration set drags on, the parser branch still lands on its own merits (geometric evidence in the review workflow is useful independent of scoring), but the graded scoring toggle stays off-by-default until the calibration set is in.
 
-## 12. Open questions / decisions to confirm before coding
+## 12. Decisions (resolved in review, 2026-04-21)
 
-1. **Band points.** Spec uses `+2.0 / +1.0 / 0.0`. Drop to `+1.5 / +0.75 / 0.0` to reduce the pocket signal's dominance over family/phenotype signals? Defer to calibration results.
-2. **Max vs sum.** §7.2 uses `max` across mutations. For Hamming-3+ candidates we may want sum-with-diminishing-returns (e.g., `band_points_first + 0.5 * band_points_second + ...`). Defer to calibration results.
-3. **Strict vs permissive AA mismatch.** Default is warn. Any scaffold where the crystal was of a mutant construct (common) will produce warnings. If the noise is high we flip to strict + a whitelist of known construct mutations. Start permissive; revisit after first real scaffold run.
-4. **`LYR` pocket-center residue.** Always emitted with band `strong`, distance 0. Do we want a distinct `band="schiff_base"` to make the covalent linkage explicit in reports? Nice-to-have; tag as a follow-up.
-5. **mmCIF timing.** RCSB is mmCIF-first now. Defer for this chunk, but expect a follow-up within 1–2 iterations. The `structure/` module layout leaves room for `cif.py` next to `pdb.py`.
-6. **Pairwise-alignment fallback for numbering.** Explicitly deferred (§6.2 rule 4). If this becomes a recurring request, use a minimal Needleman–Wunsch in pure Python (~30 lines) or pull in `parasail`/`biopython` at that point.
+1. **Band points:** start at `+2.0 / +1.0 / 0.0`. Exposed as module-level constants (one import to tune). Revisit after the literature calibration set lands.
+2. **Aggregation across mutations:** `max`. Simpler and safer; avoids shotgun-combination reward. Sum-with-diminishing-returns reconsidered only if calibration shows `max` is systematically wrong.
+3. **PDB vs scaffold AA mismatch:** permissive by default — warn and set `review_needed=true` on the affected pocket residue. `--strict-mapping` promotes the mismatch to a hard error for users who want one.
+4. **`LYR` pocket-center residue:** always emitted with band `strong`, distance 0, carrying `role="schiff_base_linkage"` on its `PocketResidue` and the corresponding `MutablePosition`. No new band enum value; `role` is a separate optional field that can grow without breaking the band vocabulary.
+5. **Pairwise-alignment fallback for numbering:** deferred. Callers without an offset or mapping get PDB-numbered evidence only (§6.2 rule 5).
+
+## 12b. Still deferred
+
+- **mmCIF / PDBx.** RCSB's default format. Not in this chunk; expected follow-up within 1–2 iterations. The `structure/` module layout leaves room for `cif.py` next to `pdb.py`.
 
 ## 13. What this chunk does NOT do
 
@@ -391,15 +426,22 @@ If curating the calibration set drags on, the parser branch still lands on its o
 ## 14. Branch plan
 
 - Branch: `structure-pocket-parser` (this branch).
-- First commit: this spec, for review.
-- Subsequent commits: parser, ligand handling, pocket computation, position-map integration, scoring integration, tests, one real PDB fixture — ideally one commit per subsystem so review stays tractable.
-- Merge target: `main`, via PR. Do not merge until the calibration dependency in §11 is either satisfied or explicitly descoped to a follow-up branch.
+- Spec commit (done): this document, for review.
+- **Stage 1 — evidence plumbing, scoring stays off.** Separate commits for: PDB parser, ligand handling (whitelist/deny-list/LYR split), pocket distance computation, schema plumbing (`MutablePosition.distance_to_retinal` / `role`, `ingest.py` pocket-map merge, `generate.py` propagation), `position_map.py` `pocket-annotate` subcommand, fixtures, tests. This stage can merge to `main` on its own — the `--graded-pocket` flag from §7.5 is off by default, so scoring is unchanged in production.
+- **Stage 2 — graded scoring + calibration.** Graded `score.py` implementation + report.py `distance_to_retinal_A` column + literature calibration set (≥20 mutations) + AUROC comparison before/after + flip `--graded-pocket` default to on. Lands as one PR so the scoring change and the evidence that justifies it arrive together.
+- Merge target: `main`, via PR per stage. Stage 1 can proceed whenever the spec is green-lit; Stage 2 gates on §11.
 
-## 15. Review checklist (fill in before implementation starts)
+## 15. Review checklist
 
-- [ ] §5 whitelist covers all retinal codes present in the PDB files we care about — anyone reviewing has checked the 10 most-used opsin PDBs against the list.
-- [ ] §6 numbering rules are acceptable; in particular, §6.2 rule 1 (parser never silently emits scaffold `seq_index`) is non-negotiable.
-- [ ] §7 thresholds and scoring scheme are accepted as starting values; calibration set (§11) will update them.
-- [ ] §9 failure table classifies each condition correctly; hard-error cases fail loudly, soft-warning cases produce actionable messages.
-- [ ] §10 fixtures plan is sufficient — no need for a third fixture.
-- [ ] §11 calibration commitment is acceptable; either a parallel chunk or a blocker before merge.
+Reviewed 2026-04-21. Clarification patches applied; green light for Stage 1 implementation.
+
+- [x] §5 whitelist / deny-list separated cleanly; `BCR` deny-listed only.
+- [x] §5.4 `LYR` bypasses the 15–25 heavy-atom sanity check until after the retinal/Lys split.
+- [x] §6 numbering rules: parser emits PDB numbering by default; `seq_index` only produced when an offset or mapping is explicitly supplied; AA-identity verification on reconciled residues; `review_needed=true` on mismatch.
+- [x] §6.2 rule 5 / §8.2 Case B: unmapped pocket evidence cannot silently reach scaffold rows; `pocket-annotate` hard-errors rather than producing a partial CSV.
+- [x] §7.4 / §7.5: graded scoring is opt-in via `--graded-pocket` (default off); evidence plumbing can land on `main` before the flag flips default-on.
+- [x] §8.4 lists the modules that actually change; "no changes" claim removed.
+- [x] §9 failure table — hard vs soft classifications accepted.
+- [x] §10 fixtures plan sufficient (synthetic + stripped 1C3W); no third fixture.
+- [x] §11 calibration set is a blocker for Stage 2 (graded scoring default-on), not Stage 1.
+- [x] §12 decisions recorded: band points `+2 / +1 / 0`, `max` aggregation, permissive AA default, `role="schiff_base_linkage"` on `LYR`, pairwise alignment deferred.
