@@ -142,7 +142,7 @@ HETATM `res_name` matches against a curated set. Initial list:
 | `A1C` | 13-cis retinal | |
 | `13M` | 13-cis retinal (alt) | |
 | `9CR` | 9-cis retinal | rhodopsin photocycle intermediates |
-| `RET_A`, `RT0`, `RET2` | vendor/refinement variants | accept; regex `^RE[T0-9A-Z]$` as safety net |
+| `REA`, `RE7`, `REZ` | 3-char vendor/refinement variants starting `RE` | accept; regex `^RE[T0-9A-Z]$` as safety net |
 
 The whitelist is stored as a module constant, imported from `opsin_pipeline/structure/ligands.py`, and easy to extend. No silent expansion via heuristics — unknown HETATM codes are logged and ignored, not assumed to be retinal.
 

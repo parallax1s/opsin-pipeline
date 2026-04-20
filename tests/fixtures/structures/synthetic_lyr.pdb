@@ -1,0 +1,35 @@
+HEADER    SYNTHETIC LYR FIXTURE                  2026-04-21   SYN2
+TITLE     LYR COVALENT LYS+RETINAL RESIDUE WITH ONE NEIGHBOR
+REMARK    LYR A 216 AT ORIGIN; ONE NEIGHBOR ALA A 85 AT (3,0,0)
+REMARK    LYR HAS 9 LYS-SIDE ATOMS (N,CA,C,O,CB,CG,CD,CE,NZ) AND 20 RETINAL CARBONS
+ATOM      1  CA  ALA A  85       3.000   0.000   0.000  1.00 20.00           C
+ATOM      2  N   LYR A 216       0.000   0.000   0.000  1.00 20.00           N
+ATOM      3  CA  LYR A 216       1.500   0.000   0.000  1.00 20.00           C
+ATOM      4  C   LYR A 216       2.000   1.200   0.000  1.00 20.00           C
+ATOM      5  O   LYR A 216       2.500   2.000   0.000  1.00 20.00           O
+ATOM      6  CB  LYR A 216       0.700   1.400   0.000  1.00 20.00           C
+ATOM      7  CG  LYR A 216       1.000   2.700   0.000  1.00 20.00           C
+ATOM      8  CD  LYR A 216       0.500   3.900   0.000  1.00 20.00           C
+ATOM      9  CE  LYR A 216       1.000   5.200   0.000  1.00 20.00           C
+ATOM     10  NZ  LYR A 216       0.500   6.400   0.000  1.00 20.00           N
+ATOM     11  C1  LYR A 216      10.000   0.000   0.000  1.00 30.00           C
+ATOM     12  C2  LYR A 216      11.000   0.000   0.000  1.00 30.00           C
+ATOM     13  C3  LYR A 216      12.000   0.000   0.000  1.00 30.00           C
+ATOM     14  C4  LYR A 216      13.000   0.000   0.000  1.00 30.00           C
+ATOM     15  C5  LYR A 216      14.000   0.000   0.000  1.00 30.00           C
+ATOM     16  C6  LYR A 216      15.000   0.000   0.000  1.00 30.00           C
+ATOM     17  C7  LYR A 216      16.000   0.000   0.000  1.00 30.00           C
+ATOM     18  C8  LYR A 216      17.000   0.000   0.000  1.00 30.00           C
+ATOM     19  C9  LYR A 216      18.000   0.000   0.000  1.00 30.00           C
+ATOM     20  C10 LYR A 216      19.000   0.000   0.000  1.00 30.00           C
+ATOM     21  C11 LYR A 216      20.000   0.000   0.000  1.00 30.00           C
+ATOM     22  C12 LYR A 216      21.000   0.000   0.000  1.00 30.00           C
+ATOM     23  C13 LYR A 216      22.000   0.000   0.000  1.00 30.00           C
+ATOM     24  C14 LYR A 216      23.000   0.000   0.000  1.00 30.00           C
+ATOM     25  C15 LYR A 216      24.000   0.000   0.000  1.00 30.00           C
+ATOM     26  C16 LYR A 216      25.000   0.000   0.000  1.00 30.00           C
+ATOM     27  C17 LYR A 216      26.000   0.000   0.000  1.00 30.00           C
+ATOM     28  C18 LYR A 216      27.000   0.000   0.000  1.00 30.00           C
+ATOM     29  C19 LYR A 216      28.000   0.000   0.000  1.00 30.00           C
+ATOM     30  C20 LYR A 216      29.000   0.000   0.000  1.00 30.00           C
+END
