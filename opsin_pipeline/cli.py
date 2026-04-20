@@ -6,7 +6,12 @@ from pathlib import Path
 from .calibration import evaluate_ranking, load_calibration
 from .generate import generate_candidates
 from .ingest import load_scaffolds
-from .position_map import apply_position_map_to_scaffolds, write_draft_position_map
+from .position_map import (
+    UnmappedPocketMapError,
+    annotate_with_pocket,
+    apply_position_map_to_scaffolds,
+    write_draft_position_map,
+)
 from .report import write_candidate_csv, write_decision_report
 from .score import rank_candidates
 from .structure.ligands import identify_ligands
@@ -27,6 +32,7 @@ def main() -> None:
 
     _add_run_parser(subparsers)
     _add_pocket_parser(subparsers)
+    _add_pocket_annotate_parser(subparsers)
     _add_draft_map_parser(subparsers)
     _add_apply_map_parser(subparsers)
 
@@ -45,6 +51,10 @@ def main() -> None:
 
     if args.command == "pocket":
         _run_pocket(args)
+        return
+
+    if args.command == "pocket-annotate":
+        _run_pocket_annotate(args)
         return
 
     if args.command is None:
@@ -151,6 +161,16 @@ def _add_pocket_parser(subparsers: argparse._SubParsersAction) -> None:
     )
 
 
+def _add_pocket_annotate_parser(subparsers: argparse._SubParsersAction) -> None:
+    annotate = subparsers.add_parser(
+        "pocket-annotate",
+        help="Merge PocketMap evidence into an existing draft position-map CSV",
+    )
+    annotate.add_argument("--position-map", required=True, help="Input draft position-map CSV")
+    annotate.add_argument("--pocket-map", required=True, help="PocketMap JSON (must have seq_index)")
+    annotate.add_argument("--out", required=True, help="Output CSV path")
+
+
 def _add_draft_map_parser(subparsers: argparse._SubParsersAction) -> None:
     draft_parser = subparsers.add_parser("draft-position-map", help="Write a draft review CSV")
     draft_parser.add_argument("--scaffolds", required=True, help="Path to scaffold JSON")
@@ -215,6 +235,18 @@ def _run_pocket(args: argparse.Namespace) -> None:
         print(f"  {len(mismatches)} mapping mismatches — review_needed")
         for r in mismatches[:5]:
             print(f"    {r.mapping_note}")
+
+
+def _run_pocket_annotate(args: argparse.Namespace) -> None:
+    try:
+        out_path = annotate_with_pocket(
+            position_map_path=args.position_map,
+            pocket_map_path=args.pocket_map,
+            output_path=args.out,
+        )
+    except UnmappedPocketMapError as exc:
+        raise SystemExit(f"pocket-annotate: {exc}")
+    print(f"Wrote {out_path}")
 
 
 def _run_pipeline(args: argparse.Namespace) -> None:
