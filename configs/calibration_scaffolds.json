@@ -1,0 +1,225 @@
+{
+  "scaffolds": [
+    {
+      "name": "BR_Hsal_BACR",
+      "family": "bacteriorhodopsin",
+      "sequence": "MLELLPTAVEGVSQAQITGRPEWIWLALGTALMGLGTLYFLVKGMGVSDPDAKKFYAITTLVPAIAFTMYLSMLLGYGLTMVPFGGEQNPIYWARYADWLFTTPLLLLDLALLVDADQGTILALVGADGIMIGTGLVGALTKVYSYRFVWWAISTAAMLYILYVLFFGFTSKAESMRPEVASTFKVLRNVTVVLWSAYPVVWLIGSEGAGIVPLNIETLLFMVLDVSAKVGFGLILLRSRAIFGEAEAPEPSAGDGAAATSD",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "proton_pumping",
+        "photocycle"
+      ],
+      "assay_architectures": [
+        "biochemical",
+        "spectroscopy"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [
+        {
+          "position": 82,
+          "allowed": [
+            "Q"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 85,
+          "allowed": [
+            "E",
+            "N",
+            "S",
+            "T",
+            "V"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 96,
+          "allowed": [
+            "N",
+            "Q"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 216,
+          "allowed": [
+            "A",
+            "G"
+          ],
+          "reason": "literature_calibration"
+        }
+      ],
+      "source_db": "UniProt",
+      "source_id": "P02945",
+      "source_header": "sp|P02945|BACR_HALSA Bacteriorhodopsin OS=Halobacterium salinarum (strain ATCC 700922 / JCM 11081 / NRC-1) OX=64091 GN=bop PE=1 SV=2",
+      "source_url": "https://rest.uniprot.org/uniprotkb/P02945.fasta",
+      "notes": "Calibration scaffold for bacteriorhodopsin literature mutants."
+    },
+    {
+      "name": "ChR2_Cre_full",
+      "family": "ChR",
+      "sequence": "MDYGGALSAVGRELLFVTNPVVVNGSVLVPEDQCYCAGWIESRGTNGAQTASNVLQWLAAGFSILLLMFYAYQTWKSTCGWEEIYVCAIEMVKVILEFFFEFKNPSMLYLATGHRVQWLRYAEWLLTCPVILIHLSNLTGLSNDYSRRTMGLLVSDIGTIVWGATSAMATGYVKVIFFCLGLCYGANTFFHAAKAYIEGYHTVPKGRCRQVVTGMAWLFFVSWGMFPILFILGPEGFGVLSVYGSTVGHTIIDLMSKNCWGLLGHYLRVLIHEHILIHGDIRKTTKLNIGGTEIEVETLVEDEAEAGAVNKGTGKYASRESFLVMRDKMKEKGIDVRASLDNSKEVEQEQAARAAMMMMNGNGMGMGMGMNGMNGMGGMNGMAGGAKPGLELTPQLQPGRVILAVPDISMVDFFREQFAQLSVTYELVPALGADNTLALVTQAQNLGGVDFVLIHPEFLRDRSSTSILSRLRGAGQRVAAFGWAQLGPMRDLIESANLDGWLEGPSFGQGILPAHIVALVAKMQQMRKMQQMQQIGMMTGGMNGMGGGMGGGMNGMGGGNGMNNMGNGMGGGMGNGMGGNGMNGMGGGNGMNNMGGNGMAGNGMGGGMGGNGMGGSMNGMSSGVVANVTPSAAGGMGGMMNGGMAAPQSPGMNGGRLGTNPLFNAAPSPLSSQLGAEAGMGSMGGMGGMSGMGGMGGMGGMGGAGAATTQAAGGNAEAEMLQNLMNEINRLKRELGE",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "growth_selection",
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [
+        {
+          "position": 90,
+          "allowed": [
+            "A"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 120,
+          "allowed": [
+            "A"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 123,
+          "allowed": [
+            "A",
+            "T"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 128,
+          "allowed": [
+            "A",
+            "S",
+            "T"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 132,
+          "allowed": [
+            "C"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 134,
+          "allowed": [
+            "K",
+            "R"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 156,
+          "allowed": [
+            "A",
+            "H"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 159,
+          "allowed": [
+            "C",
+            "S"
+          ],
+          "reason": "literature_calibration"
+        },
+        {
+          "position": 257,
+          "allowed": [
+            "A"
+          ],
+          "reason": "literature_calibration"
+        }
+      ],
+      "source_db": "UniProt",
+      "source_id": "Q8RUT8",
+      "source_header": "tr|Q8RUT8|Q8RUT8_CHLRE Archaeal-type opsin 2 OS=Chlamydomonas reinhardtii OX=3055 GN=cop4 PE=1 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/Q8RUT8.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "Chrimson_5ZIH_structure",
+      "family": "ChR",
+      "sequence": "MSRRPWLLALALAVALAAGSAGASTGSDATVPVATQDGPDYVFHRAHERMLFQTSYTLENNGSVICIPNNGQCFCLAWLHSRGTPGEKIGAQVCQWIAFSIAIALLTFYGFSAWKATCGWEEVYVCCVEVLFVTLEIFKEFSSPATVYLSTGNHAYCLRYFEWLLSCPVILIKLSNLSGLKNDYSKRTMGLIVSCVGMIVFGMAAGLATDWLKWLLYIVSCIYGGYMYFQAAKCYVEANHSVPKGHCRMVVKLMAYAYFASWGSYPILWAVGPEGLLKLSPYANSIGHSICDIIAKEFWTFLAHHLRIKIHEHILIHGDIRKTTKMEIGGEEVEVEEFVEEEDEDTV",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [
+        {
+          "position": 176,
+          "allowed": [
+            "R"
+          ],
+          "reason": "literature_calibration"
+        }
+      ],
+      "source_db": "RCSB",
+      "source_id": "5ZIH",
+      "source_header": "5ZIH_1|Chains A, B|Sensory opsin A,Chrimson|Chlamydomonas reinhardtii (3055)",
+      "source_url": "https://www.rcsb.org/fasta/entry/5ZIH/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 590
+    },
+    {
+      "name": "GtACR1_6CSM_structure",
+      "family": "anion_ChR",
+      "sequence": "ITCDPAIYGEWSRENQFCVEKSLITLDGIKYVQLVMAVVSACQVFFMVTRAPKVPWEAIYLPTTEMITYSLAFTGNGYIRVANGKYLPWARMASWLCTCPIMLGLVSNMALVKYKSIPLNPMMIAASSICTVFGITASVVLDPLHVWLYCFISSIFFIFEMVVAFAIFAITIHDFQTIGSPMSLKVVERLKLMRIVFYVSWMAYPILWSFSSTGACIMSENTSSVLYLLGDALCKNTYGILLWATTWGLLNGKWDRDYVKGRNVDGTLMPEYEQDLE",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "anion_conductance",
+        "expression"
+      ],
+      "assay_architectures": [
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "RCSB",
+      "source_id": "6CSM",
+      "source_header": "6CSM_1|Chains A, B, C, D|GtACR1|Guillardia theta CCMP2712 (905079)",
+      "source_url": "https://www.rcsb.org/fasta/entry/6CSM/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 515
+    },
+    {
+      "name": "CaRhGC_full",
+      "family": "RhGC",
+      "sequence": "MKDKDNNLRGACSGCSCPEYCYSPTSTLCDDCKCSVTKHPIVEQPLTRNGSFRSSGASLLPSPSQPNIKVTGSSTASSNANMRNRQNNSLSVSNVRSTSSASSSNQSALQQYQTNIADMWSWDMMLSTPSLKFLTGQFIMWAILTVAGAFYALFIQERQAYNRGWADIWYGYGAFGFGIGIAFSYMGFAGARNPEKKALSLCLLGVNIIAFSSYILIMLRLTPTIEGTLSNPVEPARYLEWIATCPADHNAWGVVFSDYALVVCGFFGAVLPPYPWGNLFNILSCAFFSFVVYSLWRSFTGAINGETPCNIEVNGLRWTRFSTVTTWTLFPLSWFAFTSGMLSFTMTEASFTMIDIGANRRRTRRWRRLPRLPRSWRVRDGLLLGYHQLHCHLVAHFTKDMMATLNKLWLEYDAIAKRWGVYKVETIGDAYLGVTGAPEVVPDHADRAVNFALDIIEMIKTFKTATAITAGVLGDLNPHWCLVGDTVNTASRMESTSKAGHIHISDSTYQMIKGKFVTQPLDLMEVKGKGKMQTYWVTARK",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "cGMP_activity",
+        "expression"
+      ],
+      "assay_architectures": [
+        "biochemical",
+        "growth_selection"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "A0A1Y2HLQ0",
+      "source_header": "tr|A0A1Y2HLQ0|A0A1Y2HLQ0_9FUNG Guanylate cyclase domain-containing protein OS=Catenaria anguillulae PL171 OX=765915 GN=BCR44DRAFT_1436942 PE=3 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/A0A1Y2HLQ0.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    }
+  ]
+}

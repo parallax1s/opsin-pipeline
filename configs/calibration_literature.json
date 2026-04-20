@@ -1,0 +1,326 @@
+{
+  "calibration_sets": [
+    {
+      "name": "BR_Hsal_BACR_literature_seed",
+      "scaffold": "BR_Hsal_BACR",
+      "source": "BR calibration seeds: PMID:7819500; DOI:10.1006/jmbi.1997.1204; DOI:10.4161/bioe.21048; DOI:10.1021/bi00226a016; DOI:10.3390/ijms150202516",
+      "known_useful": [
+        {
+          "label": "D85N",
+          "mutations": [
+            {
+              "position": 85,
+              "to": "N"
+            }
+          ],
+          "note": "D85N red-shift / inverted proton translocation evidence",
+          "delta_lambda_nm": 35
+        },
+        {
+          "label": "D85T",
+          "mutations": [
+            {
+              "position": 85,
+              "to": "T"
+            }
+          ],
+          "note": "D85T red-shift / chloride and proton transport mode change",
+          "delta_lambda_nm": 35
+        },
+        {
+          "label": "D85S",
+          "mutations": [
+            {
+              "position": 85,
+              "to": "S"
+            }
+          ],
+          "note": "D85S red-shift to about 609 nm in BR mutant study",
+          "delta_lambda_nm": 41
+        },
+        {
+          "label": "D85V",
+          "mutations": [
+            {
+              "position": 85,
+              "to": "V"
+            }
+          ],
+          "note": "D85V slight blue shift in BR mutant study",
+          "delta_lambda_nm": -5
+        },
+        {
+          "label": "D85N_D96N",
+          "mutations": [
+            {
+              "position": 85,
+              "to": "N"
+            },
+            {
+              "position": 96,
+              "to": "N"
+            }
+          ],
+          "note": "double mutant with altered spectral and transport behavior",
+          "delta_lambda_nm": 30
+        },
+        {
+          "label": "D85E_D96Q",
+          "mutations": [
+            {
+              "position": 85,
+              "to": "E"
+            },
+            {
+              "position": 96,
+              "to": "Q"
+            }
+          ],
+          "note": "photochromic BR mutant used for Q photoproduct characterization"
+        }
+      ],
+      "known_neutral": [
+        {
+          "label": "D96N",
+          "mutations": [
+            {
+              "position": 96,
+              "to": "N"
+            }
+          ],
+          "note": "proton donor mutation; useful as non-pocket functional control for scoring"
+        },
+        {
+          "label": "R82Q",
+          "mutations": [
+            {
+              "position": 82,
+              "to": "Q"
+            }
+          ],
+          "note": "pH/pumping mutant control from BR purification and pH-dependence literature"
+        }
+      ],
+      "known_disruptive": [
+        {
+          "label": "K216A",
+          "mutations": [
+            {
+              "position": 216,
+              "to": "A"
+            }
+          ],
+          "note": "retinal Schiff-base lysine substitution; expected chromophore-binding disruption"
+        },
+        {
+          "label": "K216G",
+          "mutations": [
+            {
+              "position": 216,
+              "to": "G"
+            }
+          ],
+          "note": "retinal Schiff-base lysine substitution; expected chromophore-binding disruption"
+        }
+      ]
+    },
+    {
+      "name": "ChR2_Cre_full_literature_seed",
+      "scaffold": "ChR2_Cre_full",
+      "source": "ChR2 calibration seeds: PMID:16360690; PMID:19079251; DOI:10.1038/nn.2379; DOI:10.1073/pnas.1017210108; PMID:22139833; PMCID:PMC2995811",
+      "known_useful": [
+        {
+          "label": "H134R",
+          "mutations": [
+            {
+              "position": 134,
+              "to": "R"
+            }
+          ],
+          "note": "enhanced stationary photocurrent"
+        },
+        {
+          "label": "E123T",
+          "mutations": [
+            {
+              "position": 123,
+              "to": "T"
+            }
+          ],
+          "note": "ChETA fast kinetics, reduced current tradeoff"
+        },
+        {
+          "label": "E123A",
+          "mutations": [
+            {
+              "position": 123,
+              "to": "A"
+            }
+          ],
+          "note": "ChETA-family kinetic mutation"
+        },
+        {
+          "label": "E123T_H134R",
+          "mutations": [
+            {
+              "position": 123,
+              "to": "T"
+            },
+            {
+              "position": 134,
+              "to": "R"
+            }
+          ],
+          "note": "combined fast kinetics and increased current variant used in circuit studies"
+        },
+        {
+          "label": "C128T",
+          "mutations": [
+            {
+              "position": 128,
+              "to": "T"
+            }
+          ],
+          "note": "step-function open-state lifetime extension"
+        },
+        {
+          "label": "C128S",
+          "mutations": [
+            {
+              "position": 128,
+              "to": "S"
+            }
+          ],
+          "note": "step-function opsin mutation"
+        },
+        {
+          "label": "C128A",
+          "mutations": [
+            {
+              "position": 128,
+              "to": "A"
+            }
+          ],
+          "note": "step-function opsin mutation"
+        },
+        {
+          "label": "D156A",
+          "mutations": [
+            {
+              "position": 156,
+              "to": "A"
+            }
+          ],
+          "note": "DC gate mutation affecting closing kinetics"
+        },
+        {
+          "label": "D156H_T159S",
+          "mutations": [
+            {
+              "position": 156,
+              "to": "H"
+            },
+            {
+              "position": 159,
+              "to": "S"
+            }
+          ],
+          "note": "reported ChR2 tail-current variant"
+        },
+        {
+          "label": "L132C",
+          "mutations": [
+            {
+              "position": 132,
+              "to": "C"
+            }
+          ],
+          "note": "CatCh Ca2+-permeability / high-sensitivity mutation"
+        },
+        {
+          "label": "T159C",
+          "mutations": [
+            {
+              "position": 159,
+              "to": "C"
+            }
+          ],
+          "note": "improved ChETA-TC / expression-current context"
+        }
+      ],
+      "known_neutral": [
+        {
+          "label": "H134K",
+          "mutations": [
+            {
+              "position": 134,
+              "to": "K"
+            }
+          ],
+          "note": "conservative charge mutation placeholder; review before scoring use"
+        },
+        {
+          "label": "T159S",
+          "mutations": [
+            {
+              "position": 159,
+              "to": "S"
+            }
+          ],
+          "note": "nearby polar substitution control; review before scoring use"
+        }
+      ],
+      "known_disruptive": [
+        {
+          "label": "R120A",
+          "mutations": [
+            {
+              "position": 120,
+              "to": "A"
+            }
+          ],
+          "note": "reported around 10-fold photocurrent reduction in cation pathway study"
+        },
+        {
+          "label": "K257A",
+          "mutations": [
+            {
+              "position": 257,
+              "to": "A"
+            }
+          ],
+          "note": "retinal-binding lysine disruption control"
+        },
+        {
+          "label": "E90A",
+          "mutations": [
+            {
+              "position": 90,
+              "to": "A"
+            }
+          ],
+          "note": "central-gate / conductance pathway perturbation control"
+        }
+      ]
+    },
+    {
+      "name": "Chrimson_5ZIH_structure_literature_seed",
+      "scaffold": "Chrimson_5ZIH_structure",
+      "source": "Chrimson calibration seed: DOI:10.1038/s41467-018-06421-9; numbering requires review against scaffold sequence.",
+      "known_useful": [
+        {
+          "label": "K176R",
+          "mutations": [
+            {
+              "position": 176,
+              "to": "R"
+            }
+          ],
+          "note": "ChrimsonR-style red-shifted / optogenetic tool variant, numbering requires review"
+        }
+      ],
+      "known_neutral": [],
+      "known_disruptive": []
+    }
+  ]
+}
