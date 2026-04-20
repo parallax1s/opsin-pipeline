@@ -25,6 +25,7 @@ def write_candidate_csv(
         "hamming",
         "total_score",
         "starting_lambda_nm",
+        "min_distance_to_retinal_A",
         "has_protected_violation",
         "tags",
         "reason",
@@ -34,6 +35,7 @@ def write_candidate_csv(
         writer.writeheader()
         for candidate in candidates:
             lam = scaffold_lambda.get(candidate.scaffold_name)
+            min_dist = _min_distance(candidate)
             writer.writerow(
                 {
                     "candidate_id": candidate.candidate_id,
@@ -43,12 +45,20 @@ def write_candidate_csv(
                     "hamming": len(candidate.mutations),
                     "total_score": candidate.scores.get("total", 0.0),
                     "starting_lambda_nm": "" if lam is None else lam,
+                    "min_distance_to_retinal_A": "" if min_dist is None else f"{min_dist:.2f}",
                     "has_protected_violation": int(candidate.has_protected_violation),
                     "tags": ";".join(candidate.tags),
                     "reason": candidate.reason_summary,
                 }
             )
     return output_path
+
+
+def _min_distance(candidate: Candidate) -> float | None:
+    distances = [
+        m.distance_to_retinal for m in candidate.mutations if m.distance_to_retinal is not None
+    ]
+    return min(distances) if distances else None
 
 
 def write_decision_report(

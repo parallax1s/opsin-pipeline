@@ -180,5 +180,58 @@ class ScaffoldIngestMergeTests(unittest.TestCase):
         self.assertIsNone(by_position[8].distance_to_retinal)
 
 
+class CandidateCSVDistanceColumnTests(unittest.TestCase):
+    def _write_pocket_map(self, directory: Path) -> Path:
+        atoms = parse_pdb(SYNTHETIC)
+        pocket = compute_pocket(
+            atoms,
+            identify_ligands(atoms),
+            scaffold_name="demo",
+            pdb_path=str(SYNTHETIC),
+        )
+        mapped = apply_offset_mapping(pocket, offset=0)
+        return write_pocket_map(mapped, directory / "pocket.json")
+
+    def test_csv_has_min_distance_column_populated_when_pocket_data_present(self):
+        import csv as _csv
+
+        from opsin_pipeline.report import write_candidate_csv
+        from opsin_pipeline.score import rank_candidates
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            pocket_path = self._write_pocket_map(tmp_path)
+            payload = {
+                "scaffolds": [
+                    {
+                        "name": "demo",
+                        "family": "Synthetic",
+                        "sequence": "AFYKWVSG",
+                        "pocket_map_path": pocket_path.name,
+                        "mutable_positions": [
+                            {"position": 1, "allowed": ["F"], "reason": "pocket"},
+                            {"position": 8, "allowed": ["F"], "reason": "far"},
+                        ],
+                    }
+                ]
+            }
+            scaffolds_path = tmp_path / "scaffolds.json"
+            scaffolds_path.write_text(json.dumps(payload), encoding="utf-8")
+            scaffolds = load_scaffolds(scaffolds_path)
+            candidates, _ = generate_candidates(scaffolds, max_mutations=1)
+            ranked = rank_candidates(candidates, scaffolds)
+
+            csv_path = write_candidate_csv(ranked, scaffolds, tmp_path / "ranked.csv")
+            with csv_path.open(encoding="utf-8") as handle:
+                rows = list(_csv.DictReader(handle))
+
+        self.assertIn("min_distance_to_retinal_A", rows[0].keys())
+        by_id = {row["candidate_id"]: row for row in rows}
+        # position 1 has pocket distance 2.0 A
+        self.assertEqual(by_id["demo_p1AtoF"]["min_distance_to_retinal_A"], "2.00")
+        # position 8 is outside the cutoff -> no distance -> blank
+        self.assertEqual(by_id["demo_p8GtoF"]["min_distance_to_retinal_A"], "")
+
+
 if __name__ == "__main__":
     unittest.main()
