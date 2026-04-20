@@ -13,7 +13,7 @@ python3 -m unittest discover -s opsin_pipeline/tests -v
 ## Run Example
 
 ```bash
-PYTHONPATH=opsin_pipeline python3 -m opsin_pipeline.cli \
+PYTHONPATH=. python3 -m opsin_pipeline.cli run \
   --scaffolds opsin_pipeline/configs/example_scaffolds.json \
   --out opsin_pipeline/out/example \
   --target-family RhGC \
@@ -35,6 +35,33 @@ Outputs:
 - PDB-backed ChR2, C1C2, Chrimson, GtACR1, and ChRmine structure sequences
 
 The real seed config intentionally leaves `mutable_positions` empty. Add protected and mutable positions only after sequence/structure numbering is reviewed.
+
+## Review Alignment / Numbering
+
+Start by creating a draft position map:
+
+```bash
+PYTHONPATH=. python3 -m opsin_pipeline.cli draft-position-map \
+  --scaffolds configs/real_scaffolds_seed.json \
+  --out out/review/position_map_draft.csv
+```
+
+Review the CSV manually or with an external alignment workflow. Mark rows as `review_status=reviewed`, then set:
+
+- `protected=true` for residues that should not be mutated
+- `mutable=true` plus `allowed_mutations=F;Y;W` for reviewed mutation sites
+- `region`, `role`, and `notes` for traceability
+
+Apply the reviewed map back into scaffold JSON:
+
+```bash
+PYTHONPATH=. python3 -m opsin_pipeline.cli apply-position-map \
+  --scaffolds configs/real_scaffolds_seed.json \
+  --position-map out/review/position_map_draft.csv \
+  --out configs/real_scaffolds_reviewed.json
+```
+
+Candidate generation should use the reviewed scaffold JSON, not the seed file.
 
 ## Current Scoring Signals
 
