@@ -1,0 +1,240 @@
+{
+  "scaffolds": [
+    {
+      "name": "ChR1_Cre_full",
+      "family": "ChR",
+      "sequence": "MSRRPWLLALALAVALAAGSAGASTGSDATVPVATQDGPDYVFHRAHERMLFQTSYTLENNGSVICIPNNGQCFCLAWLKSNGTNAEKLAANILQWITFALSALCLMFYGYQTWKSTCGWEEIYVATIEMIKFIIEYFHEFDEPAVIYSSNGNKTVWLRYAEWLLTCPVILIHLSNLTGLANDYNKRTMGLLVSDIGTIVWGTTAALSKGYVRVIFFLMGLCYGIYTFFNAAKVYIEAYHTVPKGICRDLVRYLAWLYFCSWAMFPVLFLLGPEGFGHINQFNSAIAHAILDLASKNAWSMMGHFLRVKIHEHILLYGDIRKKQKVNVAGQEMEVETMVHEEDDETQKVPTAKYANRDSFIIMRDRLKEKGFETRASLDGDPNGDAEANAAAGGKPGMEMGKMTGMGMGMGAGMGMATIDSGRVILAVPDISMVDFFREQFARLPVPYELVPALGAENTLQLVQQAQSLGGCDFVLMHPEFLRDRSPTGLLPRLKMGGQRAAAFGWAAIGPMRDLIEGSGVDGWLEGPSFGAGINQQALVALINRMQQAKKMGMMGGMGMGMGGGMGMGMGMGMGMAPSMNAGMTGGMGGASMGGAVMGMGMGMQPMQQAMPAMSPMMTQQPSMMSQPSAMSAGGAMQAMGGVMPSPAPGGRVGTNPLFGSAPSPLSSQPGISPGMATPPAATAAPAAGGSEAEMLQQLMSEINRLKNELGE",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "growth_selection",
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "Q93WP2",
+      "source_header": "tr|Q93WP2|Q93WP2_CHLRE Archaeal-type opsin 1 OS=Chlamydomonas reinhardtii OX=3055 GN=acop1 PE=1 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/Q93WP2.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "ChR2_Cre_full",
+      "family": "ChR",
+      "sequence": "MDYGGALSAVGRELLFVTNPVVVNGSVLVPEDQCYCAGWIESRGTNGAQTASNVLQWLAAGFSILLLMFYAYQTWKSTCGWEEIYVCAIEMVKVILEFFFEFKNPSMLYLATGHRVQWLRYAEWLLTCPVILIHLSNLTGLSNDYSRRTMGLLVSDIGTIVWGATSAMATGYVKVIFFCLGLCYGANTFFHAAKAYIEGYHTVPKGRCRQVVTGMAWLFFVSWGMFPILFILGPEGFGVLSVYGSTVGHTIIDLMSKNCWGLLGHYLRVLIHEHILIHGDIRKTTKLNIGGTEIEVETLVEDEAEAGAVNKGTGKYASRESFLVMRDKMKEKGIDVRASLDNSKEVEQEQAARAAMMMMNGNGMGMGMGMNGMNGMGGMNGMAGGAKPGLELTPQLQPGRVILAVPDISMVDFFREQFAQLSVTYELVPALGADNTLALVTQAQNLGGVDFVLIHPEFLRDRSSTSILSRLRGAGQRVAAFGWAQLGPMRDLIESANLDGWLEGPSFGQGILPAHIVALVAKMQQMRKMQQMQQIGMMTGGMNGMGGGMGGGMNGMGGGNGMNNMGNGMGGGMGNGMGGNGMNGMGGGNGMNNMGGNGMAGNGMGGGMGGNGMGGSMNGMSSGVVANVTPSAAGGMGGMMNGGMAAPQSPGMNGGRLGTNPLFNAAPSPLSSQLGAEAGMGSMGGMGGMSGMGGMGGMGGMGGAGAATTQAAGGNAEAEMLQNLMNEINRLKRELGE",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "growth_selection",
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "Q8RUT8",
+      "source_header": "tr|Q8RUT8|Q8RUT8_CHLRE Archaeal-type opsin 2 OS=Chlamydomonas reinhardtii OX=3055 GN=cop4 PE=1 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/Q8RUT8.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "CaRhGC_full",
+      "family": "RhGC",
+      "sequence": "MKDKDNNLRGACSGCSCPEYCYSPTSTLCDDCKCSVTKHPIVEQPLTRNGSFRSSGASLLPSPSQPNIKVTGSSTASSNANMRNRQNNSLSVSNVRSTSSASSSNQSALQQYQTNIADMWSWDMMLSTPSLKFLTGQFIMWAILTVAGAFYALFIQERQAYNRGWADIWYGYGAFGFGIGIAFSYMGFAGARNPEKKALSLCLLGVNIIAFSSYILIMLRLTPTIEGTLSNPVEPARYLEWIATCPADHNAWGVVFSDYALVVCGFFGAVLPPYPWGNLFNILSCAFFSFVVYSLWRSFTGAINGETPCNIEVNGLRWTRFSTVTTWTLFPLSWFAFTSGMLSFTMTEASFTMIDIGANRRRTRRWRRLPRLPRSWRVRDGLLLGYHQLHCHLVAHFTKDMMATLNKLWLEYDAIAKRWGVYKVETIGDAYLGVTGAPEVVPDHADRAVNFALDIIEMIKTFKTATAITAGVLGDLNPHWCLVGDTVNTASRMESTSKAGHIHISDSTYQMIKGKFVTQPLDLMEVKGKGKMQTYWVTARK",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "cGMP_activity",
+        "expression"
+      ],
+      "assay_architectures": [
+        "biochemical",
+        "growth_selection"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "A0A1Y2HLQ0",
+      "source_header": "tr|A0A1Y2HLQ0|A0A1Y2HLQ0_9FUNG Guanylate cyclase domain-containing protein OS=Catenaria anguillulae PL171 OX=765915 GN=BCR44DRAFT_1436942 PE=3 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/A0A1Y2HLQ0.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "CaRhGC_related_cyclase",
+      "family": "RhGC_related",
+      "sequence": "MLSFTMTEASFTMIDIGAKVFLTLVLVNSTVEQAQNQKVEAITAIAEELESQITNCDAILQKMMPEGVLEQLKNGQATEAKEYESVTVFFSDITNFTVISSRTSTKDMMATLNKLWLEYDAIAKRWGVYKVETIGDAYLGVTGAPEVVPDHADRAVNFALDIIEMIKTFKTATGESINIRIGLNSGPVTAGVLGDLNPHWCLVGDTVNTASRMESTSKAGHIHISDSTYQMIKGKFVTQPLDLMEVKGKGKMQTYWVTARK",
+      "target_phenotypes": [
+        "cGMP_activity",
+        "expression"
+      ],
+      "assay_architectures": [
+        "biochemical"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "A0A1Y2HEJ3",
+      "source_header": "tr|A0A1Y2HEJ3|A0A1Y2HEJ3_9FUNG Nucleotide cyclase OS=Catenaria anguillulae PL171 OX=765915 GN=BCR44DRAFT_1480233 PE=1 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/A0A1Y2HEJ3.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "BeRhGC1_full",
+      "family": "RhGC",
+      "sequence": "MKDKDNNLRGACSSCNCPEYCFSPTSTLCDDCKCSVTKHPIVEQPLSRNGSFRSSGASLLPSPSSPNVKITSTVGLRSRKSESQANVRGSMISNSNSGSRSNNSGGAGGGSGGSSSSKGGSALANYQSAMSELWSWNMMLSTPSLKFLTVQFTTWIVLTTVGAIYTLFFHERQAYNRGWADIWYGYGAFGFGLGLSFAYMGFTGARNPEKKALSLCLLGVNFISFMSYIIIMLRLTPTIEGTMANPVEPARYLEWIATCPVLILLISEITQYPHDPYKVIVNDYALCLAGFVGAISAQQPWGDLAHFVSCLCFSYVVYSLWSCFTGAIDGETQCNVEKSGLRWIRFSTITTWSLFPITWFSYTSGLISFTVAEAGFSMIDIGAKVFLTLVLVNSTVEQAQNQKVDAITAIAEELENQINNCDAILQKMMPEGVLEQLKNGQATEAKEYESVTVFFSDITNFTVISSRTSTKDMMATLNKLWLEYDAIAKRWGVYKVETIGDAYLGVTGAPDVVPDHAERACNFAVDIIEMIKSFKTITGESINIRIGLNSGPVTAGVLGDLNPHWCLVGDTVNTASRMESTSKAGHIHISESTYHFIKSKFVTQPLDVMEVKGKGKMQTYWVLGRK",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "cGMP_activity",
+        "expression"
+      ],
+      "assay_architectures": [
+        "biochemical",
+        "growth_selection"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "A0A060H1D7",
+      "source_header": "tr|A0A060H1D7|A0A060H1D7_BLAEM Bacterio-rhodopsin/guanylyl cyclase 1 fusion protein OS=Blastocladiella emersonii OX=4808 GN=gc1 PE=1 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/A0A060H1D7.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "BeCNG1_partner",
+      "family": "CNG_channel",
+      "sequence": "MAVENDAEVHTMEKSGAAANHNYISTYCCSPRCARLLETTSAAAAAAYSRTPLLSETVHFFSETGRRLGFFTRDGDDSDSPDDDDDPDDPDDDPAPALGPTAAGRRGDRDDADLLAGAARPMADARALARMGGSSGSGSTQSTRKRNGAGGRSSRLADGPDNDLFIAGNQGGGGLFGGLTWQDLWQKLLKFYLIPGEPFLTWWDYFMVLVAVTNGITIPFIAAFRYLFTGSFIVQYALDVIYLIDIFIKFHVSYLDRGFYVIFPKEMAMHYMRSWEFSFDLFTNLPFDLIALSWSNSAVPGEVLYFLSIVRLHKLMRTFKLLWWFHKEEKRLNAQAVFQMYKFTIYITLITHWCTCIWYVLACPDQCVTPSWATDPNQNPDFSDRLSMYVYALYWTVMTMTTTGYGDVHATNDRERIWSIICMITGVFLYGYVSGTIASSLSNLDSRRVAYRQKVEAIKQYMLDQNMDKDMQKRVTGWYEYTWERNKGIDVINVFNDLPSNFRAEVALSVNEDIIEKAPIFRNTSLGFRRMLSIAMRINFFTADTYIVHRGEIGKEMFFVVQGRVDVLNHDESKPISSMVEGSYFGEYMLILGNVCEASAIAVCNCDVYVLSKDDYDQACANYPEDANKVLAATKDAYQKQLEKQQRSQRKKSTDDFDLGTTSGLLGVGGATNLTAMPSVIMEEMGSTMGMASPPQSGVQTRRASGDDARKSRPTLTVPEED",
+      "target_phenotypes": [
+        "cGMP_gating",
+        "K_rescue"
+      ],
+      "assay_architectures": [
+        "growth_selection",
+        "electrophysiology"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "UniProt",
+      "source_id": "A0A060H2D6",
+      "source_header": "tr|A0A060H2D6|A0A060H2D6_BLAEM Cyclic nucleotide-gated channel 1 (Fragment) OS=Blastocladiella emersonii OX=4808 GN=CNG1 PE=2 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/A0A060H2D6.fasta",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+    },
+    {
+      "name": "ChR2_6EID_structure",
+      "family": "ChR",
+      "sequence": "MDYGGALSAVGRELLFVTNPVVVNGSVLVPEDQCYCAGWIESRGTNGAQTASNVLQWLAAGFSILLLMFYAYQTWKSTCGWEEIYVCAIEMVKVILEFFFEFKNPSMLYLATGHRVQWLRYAEWLLTCPVILIHLSNLTGLSNDYSRRTMGLLVSDIGTIVWGATSAMATGYVKVIFFCLGLCYGANTFFHAAKAYIEGYHTVPKGRCRQVVTGMAWLFFVSWGMFPILFILGPEGFGVLSVYGSTVGHTIIDLMSKNCWGLLGHYLRVLIHEHILIHGDIRKTTKLNIGGTEIEVETLVEDEAEAGAVNKGTGK",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "growth_selection",
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "RCSB",
+      "source_id": "6EID",
+      "source_header": "6EID_1|Chains A, B|Archaeal-type opsin 2|Chlamydomonas reinhardtii (3055)",
+      "source_url": "https://www.rcsb.org/fasta/entry/6EID/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 470
+    },
+    {
+      "name": "C1C2_3UG9_structure",
+      "family": "ChR_chimera",
+      "sequence": "STGSDATVPVATQDGPDYVFHRAHERMLFQTSYTLENNGSVICIPNNGQCFCLAWLKSNGTNAEKLAANILQWITFALSALCLMFYGYQTWKSTCGWEEIYVATIEMIKFIIEYFHEFDEPAVIYSSNGNKTVWLRYAEWLLTCPVILIHLSNLTGLANDYNKRTMGLLVSDIGTIVWGTTAALSKGYVRVIFFLMGLCYGIYTFFNAAKVYIEAYHTVPKGRCRQVVTGMAWLFFVSWGMFPILFILGPEGFGVLSVYGSTVGHTIIDLMSKNCWGLLGHYLRVLIHEHILIHGDIRKTTKLNIGGTEIEVETLVEDEAEAGAVSSEDLYFQ",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "RCSB",
+      "source_id": "3UG9",
+      "source_header": "3UG9_1|Chain A|Archaeal-type opsin 1, Archaeal-type opsin 2|Chlamydomonas reinhardtii (3055)",
+      "source_url": "https://www.rcsb.org/fasta/entry/3UG9/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 478
+    },
+    {
+      "name": "Chrimson_5ZIH_structure",
+      "family": "ChR",
+      "sequence": "MSRRPWLLALALAVALAAGSAGASTGSDATVPVATQDGPDYVFHRAHERMLFQTSYTLENNGSVICIPNNGQCFCLAWLHSRGTPGEKIGAQVCQWIAFSIAIALLTFYGFSAWKATCGWEEVYVCCVEVLFVTLEIFKEFSSPATVYLSTGNHAYCLRYFEWLLSCPVILIKLSNLSGLKNDYSKRTMGLIVSCVGMIVFGMAAGLATDWLKWLLYIVSCIYGGYMYFQAAKCYVEANHSVPKGHCRMVVKLMAYAYFASWGSYPILWAVGPEGLLKLSPYANSIGHSICDIIAKEFWTFLAHHLRIKIHEHILIHGDIRKTTKMEIGGEEVEVEEFVEEEDEDTV",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "RCSB",
+      "source_id": "5ZIH",
+      "source_header": "5ZIH_1|Chains A, B|Sensory opsin A,Chrimson|Chlamydomonas reinhardtii (3055)",
+      "source_url": "https://www.rcsb.org/fasta/entry/5ZIH/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 590
+    },
+    {
+      "name": "GtACR1_6CSM_structure",
+      "family": "anion_ChR",
+      "sequence": "ITCDPAIYGEWSRENQFCVEKSLITLDGIKYVQLVMAVVSACQVFFMVTRAPKVPWEAIYLPTTEMITYSLAFTGNGYIRVANGKYLPWARMASWLCTCPIMLGLVSNMALVKYKSIPLNPMMIAASSICTVFGITASVVLDPLHVWLYCFISSIFFIFEMVVAFAIFAITIHDFQTIGSPMSLKVVERLKLMRIVFYVSWMAYPILWSFSSTGACIMSENTSSVLYLLGDALCKNTYGILLWATTWGLLNGKWDRDYVKGRNVDGTLMPEYEQDLE",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "anion_conductance",
+        "expression"
+      ],
+      "assay_architectures": [
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "RCSB",
+      "source_id": "6CSM",
+      "source_header": "6CSM_1|Chains A, B, C, D|GtACR1|Guillardia theta CCMP2712 (905079)",
+      "source_url": "https://www.rcsb.org/fasta/entry/6CSM/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 515
+    },
+    {
+      "name": "ChRmine_7W9W_structure",
+      "family": "ChRmine_like",
+      "sequence": "GPMAHAPGTDQMFYVGTMDGWYLDTKLNSVAIGAHWSCFIVLTITTFYLGYESWTSRGPSKRTSFYAGYQEEQNLALFVNFFAMLSYFGKIVADTLGHNFGDVGPFIIGFGNYRYADYMLTCPMLVYDLLYQLRAPYRVSCSAIIFAILMSGVLAEFYAEGDPRLRNGAYAWYGFGCFWFIFAYSIVMSIVAKQYSRLAQLAQDTGAEHSLHVLKFAVFTFSMLWILFPLVWAICPRGFGWIDDNWTEVAHCVCDIVAKSCYGFALARFRKTYDEELFRLLEQLGHDEDEFQKLELDMRLSSNGERLEVLFQ",
+      "target_phenotypes": [
+        "spectral_tuning",
+        "photocurrent",
+        "expression"
+      ],
+      "assay_architectures": [
+        "optical_ephys",
+        "patch_clamp"
+      ],
+      "protected_positions": [],
+      "mutable_positions": [],
+      "source_db": "RCSB",
+      "source_id": "7W9W",
+      "source_header": "7W9W_1|Chain A|ChRmine|Rhodomonas lens (354590)",
+      "source_url": "https://www.rcsb.org/fasta/entry/7W9W/download",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "starting_lambda_nm": 520
+    }
+  ]
+}

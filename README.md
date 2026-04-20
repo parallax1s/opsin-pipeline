@@ -25,6 +25,17 @@ Outputs:
 - `ranked_candidates.csv`
 - `decision_report.md`
 
+## Real Scaffold Seed Set
+
+`configs/real_scaffolds_seed.json` and `configs/real_scaffolds_seed.fasta` contain initial scaffold sequences pulled from UniProt and RCSB:
+
+- ChR1 and ChR2 full UniProt sequences
+- CaRhGC and BeRhGC1 UniProt sequences
+- BeCNG1 as a cGMP-gated channel partner candidate
+- PDB-backed ChR2, C1C2, Chrimson, GtACR1, and ChRmine structure sequences
+
+The real seed config intentionally leaves `mutable_positions` empty. Add protected and mutable positions only after sequence/structure numbering is reviewed.
+
 ## Current Scoring Signals
 
 - target family match
