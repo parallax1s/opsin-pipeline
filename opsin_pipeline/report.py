@@ -3,18 +3,29 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+from .calibration import CalibrationReport
+from .diversify import diversify_ranked
+from .generate import GenerationStats
 from .schemas import Candidate, Scaffold
 
 
-def write_candidate_csv(candidates: list[Candidate], path: str | Path) -> Path:
+def write_candidate_csv(
+    candidates: list[Candidate],
+    scaffolds: list[Scaffold],
+    path: str | Path,
+) -> Path:
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    scaffold_lambda = {s.name: s.starting_lambda_nm for s in scaffolds}
     fieldnames = [
         "candidate_id",
         "scaffold_name",
         "family",
         "mutations",
+        "hamming",
         "total_score",
+        "starting_lambda_nm",
+        "has_protected_violation",
         "tags",
         "reason",
     ]
@@ -22,13 +33,17 @@ def write_candidate_csv(candidates: list[Candidate], path: str | Path) -> Path:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         for candidate in candidates:
+            lam = scaffold_lambda.get(candidate.scaffold_name)
             writer.writerow(
                 {
                     "candidate_id": candidate.candidate_id,
                     "scaffold_name": candidate.scaffold_name,
                     "family": candidate.family,
                     "mutations": candidate.mutation_summary,
+                    "hamming": len(candidate.mutations),
                     "total_score": candidate.scores.get("total", 0.0),
+                    "starting_lambda_nm": "" if lam is None else lam,
+                    "has_protected_violation": int(candidate.has_protected_violation),
                     "tags": ";".join(candidate.tags),
                     "reason": candidate.reason_summary,
                 }
@@ -43,9 +58,22 @@ def write_decision_report(
     target_family: str | None = None,
     target_phenotype: str | None = None,
     top_n: int = 10,
+    per_scaffold_cap: int | None = None,
+    per_position_cap: int | None = None,
+    generation_stats: GenerationStats | None = None,
+    calibration_report: CalibrationReport | None = None,
 ) -> Path:
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    diversified = diversify_ranked(
+        candidates,
+        per_scaffold_cap=per_scaffold_cap,
+        per_position_cap=per_position_cap,
+        top_n=top_n,
+    )
+    violation_count = sum(1 for c in candidates if c.has_protected_violation)
+
     lines = [
         "# Opsin Pipeline Decision Report",
         "",
@@ -53,25 +81,46 @@ def write_decision_report(
         f"- Target phenotype: {target_phenotype or 'any'}",
         f"- Scaffolds screened: {len(scaffolds)}",
         f"- Candidates generated: {len(candidates)}",
+        f"- Protected-residue violations: {violation_count}",
+        f"- Diversity caps: per_scaffold_cap={per_scaffold_cap}, per_position_cap={per_position_cap}",
         "",
-        "## Top Candidates",
-        "",
-        "| Rank | Candidate | Scaffold | Score | Tags |",
-        "|---:|---|---|---:|---|",
     ]
-    for index, candidate in enumerate(candidates[:top_n], start=1):
+
+    if scaffolds:
+        lines.extend(_render_scaffold_summary(scaffolds))
+
+    if generation_stats is not None:
+        lines.extend(_render_generation_stats(generation_stats))
+
+    lines.extend(
+        [
+            f"## Top {len(diversified)} Candidates (diversified)",
+            "",
+            "| Rank | Candidate | Scaffold | Hamming | Score | λmax start (nm) | Tags |",
+            "|---:|---|---|---:|---:|---:|---|",
+        ]
+    )
+    scaffold_lambda = {s.name: s.starting_lambda_nm for s in scaffolds}
+    for index, candidate in enumerate(diversified, start=1):
+        lam = scaffold_lambda.get(candidate.scaffold_name)
         lines.append(
-            "| {rank} | {candidate} | {scaffold} | {score} | {tags} |".format(
+            "| {rank} | {candidate} | {scaffold} | {hamming} | {score} | {lam} | {tags} |".format(
                 rank=index,
                 candidate=candidate.candidate_id,
                 scaffold=candidate.scaffold_name,
+                hamming=len(candidate.mutations),
                 score=candidate.scores.get("total", 0.0),
+                lam="—" if lam is None else lam,
                 tags=", ".join(candidate.tags),
             )
         )
+    lines.append("")
+
+    if calibration_report is not None:
+        lines.extend(_render_calibration(calibration_report))
+
     lines.extend(
         [
-            "",
             "## Next Validation Layer",
             "",
             "- Run structure and retinal-pocket checks on the top candidates.",
@@ -83,3 +132,59 @@ def write_decision_report(
     output_path.write_text("\n".join(lines), encoding="utf-8")
     return output_path
 
+
+def _render_scaffold_summary(scaffolds: list[Scaffold]) -> list[str]:
+    lines = [
+        "## Scaffolds",
+        "",
+        "| Scaffold | Family | λmax start (nm) | Protected | Mutable |",
+        "|---|---|---:|---:|---:|",
+    ]
+    for scaffold in scaffolds:
+        lam = scaffold.starting_lambda_nm
+        lines.append(
+            "| {name} | {family} | {lam} | {prot} | {mut} |".format(
+                name=scaffold.name,
+                family=scaffold.family,
+                lam="—" if lam is None else lam,
+                prot=len(scaffold.protected_positions),
+                mut=len(scaffold.mutable_positions),
+            )
+        )
+    lines.append("")
+    return lines
+
+
+def _render_generation_stats(stats: GenerationStats) -> list[str]:
+    lines = ["## Generation", "", f"- Total candidates: {stats.total_generated}"]
+    if stats.per_scaffold_truncated:
+        lines.append("- Scaffolds truncated by combinatorial cap:")
+        for name, dropped in sorted(stats.per_scaffold_truncated.items()):
+            kept = stats.per_scaffold_generated.get(name, 0)
+            lines.append(f"  - {name}: kept {kept}, dropped {dropped}")
+    lines.append("")
+    return lines
+
+
+def _render_calibration(report: CalibrationReport) -> list[str]:
+    auroc = report.auroc_useful_vs_disruptive
+    mrr = report.mean_reciprocal_rank_useful
+    lines = [
+        "## Calibration",
+        "",
+        f"- Useful matched: {report.useful_matched} / {report.useful_total}",
+        f"- Disruptive matched: {report.disruptive_matched} / {report.disruptive_total}",
+        f"- Neutral matched: {report.neutral_matched} / {report.neutral_total}",
+        f"- AUROC useful vs disruptive: {auroc if auroc is not None else 'n/a (need both sides matched)'}",
+        f"- MRR of useful mutants: {mrr if mrr is not None else 'n/a'}",
+        f"- Useful in top {report.top_k}: {report.useful_in_top_k} (random baseline ≈ {report.random_baseline_useful_in_top_k})",
+        f"- Disruptive in top {report.top_k}: {report.disruptive_in_top_k}",
+    ]
+    if report.unmatched_labels:
+        preview = ", ".join(report.unmatched_labels[:10])
+        ellipsis = "…" if len(report.unmatched_labels) > 10 else ""
+        lines.append(
+            f"- Unmatched calibration entries ({len(report.unmatched_labels)}): {preview}{ellipsis}"
+        )
+    lines.append("")
+    return lines

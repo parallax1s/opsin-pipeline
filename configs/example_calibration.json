@@ -1,0 +1,54 @@
+{
+  "_note": "Illustrative calibration set matching configs/example_scaffolds.json. Positions and labels are synthetic and exist only to exercise the evaluator against the example scaffolds. Replace with curated literature mutants (BR, ChR, RhGC, etc.) before relying on AUROC / MRR numbers.",
+  "calibration_sets": [
+    {
+      "name": "CaRhGC_synthetic_demo",
+      "scaffold": "CaRhGC",
+      "source": "synthetic, do not cite",
+      "known_useful": [
+        {
+          "label": "K8F",
+          "mutations": [{"position": 8, "to": "F"}],
+          "delta_lambda_nm": -12,
+          "note": "pocket aromatic - illustrative blue-shift"
+        },
+        {
+          "label": "K8F+F19A",
+          "mutations": [
+            {"position": 8, "to": "F"},
+            {"position": 19, "to": "A"}
+          ],
+          "delta_lambda_nm": -18,
+          "note": "pocket + helix-face double, illustrative"
+        }
+      ],
+      "known_neutral": [
+        {
+          "label": "F19S",
+          "mutations": [{"position": 19, "to": "S"}],
+          "note": "helix face, expected neutral"
+        }
+      ],
+      "known_disruptive": [
+        {
+          "label": "I12A",
+          "mutations": [{"position": 12, "to": "A"}],
+          "note": "protected position; protected_penalty should fire if such a candidate is scored"
+        }
+      ]
+    },
+    {
+      "name": "ChR2_synthetic_demo",
+      "scaffold": "ChR2",
+      "source": "synthetic, do not cite",
+      "known_useful": [
+        {
+          "label": "L15F",
+          "mutations": [{"position": 15, "to": "F"}],
+          "delta_lambda_nm": -8,
+          "note": "illustrative pocket aromatic"
+        }
+      ]
+    }
+  ]
+}

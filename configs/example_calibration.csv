@@ -1,0 +1,6 @@
+candidate_id,label,evidence
+CaRhGC_p8KtoF,positive,synthetic pocket aromatic blue-shift (illustrative)
+CaRhGC_p8KtoF__p19FtoA,positive,synthetic pocket + helix-face double (illustrative)
+CaRhGC_p19FtoS,neutral,helix-face single expected near-neutral
+ChR2_p15LtoF,positive,illustrative pocket aromatic
+CaRhGC_p8KtoW,negative,synthetic steric clash (illustrative)

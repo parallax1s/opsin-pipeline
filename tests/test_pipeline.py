@@ -70,6 +70,7 @@ class OpsinPipelineTests(unittest.TestCase):
         self.assertEqual([s.name for s in scaffolds], ["CaRhGC", "ChR2"])
         self.assertEqual(scaffolds[0].family, "RhGC")
         self.assertEqual(scaffolds[0].mutable_positions[0].allowed, ["F", "Y"])
+        self.assertEqual(scaffolds[0].starting_lambda_nm, 527.0)
 
     def test_generate_single_mutants_skips_protected_positions(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -111,7 +112,7 @@ class OpsinPipelineTests(unittest.TestCase):
                 target_phenotype="spectral_tuning",
             )
 
-            csv_path = write_candidate_csv(ranked, tmp_path / "ranked_candidates.csv")
+            csv_path = write_candidate_csv(ranked, scaffolds, tmp_path / "ranked_candidates.csv")
             report_path = write_decision_report(
                 ranked,
                 scaffolds,
@@ -125,6 +126,8 @@ class OpsinPipelineTests(unittest.TestCase):
             report = report_path.read_text(encoding="utf-8")
 
         self.assertEqual(rows[0]["scaffold_name"], "CaRhGC")
+        self.assertIn("starting_lambda_nm", rows[0].keys())
+        self.assertIn("hamming", rows[0].keys())
         self.assertIn("# Opsin Pipeline Decision Report", report)
         self.assertIn("CaRhGC_p8KtoF", report)
 
