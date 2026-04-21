@@ -54,7 +54,8 @@
       "source_id": "P02945",
       "source_header": "sp|P02945|BACR_HALSA Bacteriorhodopsin OS=Halobacterium salinarum (strain ATCC 700922 / JCM 11081 / NRC-1) OX=64091 GN=bop PE=1 SV=2",
       "source_url": "https://rest.uniprot.org/uniprotkb/P02945.fasta",
-      "notes": "Calibration scaffold for bacteriorhodopsin literature mutants. Calibration positions use full UniProt indexing; mature BR labels are shifted by +13 (R82->95, D85->98, D96->109, K216->229)."
+      "notes": "Calibration scaffold for bacteriorhodopsin literature mutants. Calibration positions use full UniProt indexing; mature BR labels are shifted by +13 (R82->95, D85->98, D96->109, K216->229).",
+      "pocket_map_path": "pocket_maps/BR_Hsal_BACR.json"
     },
     {
       "name": "ChR2_Cre_full",
@@ -146,7 +147,8 @@
       "source_id": "Q8RUT8",
       "source_header": "tr|Q8RUT8|Q8RUT8_CHLRE Archaeal-type opsin 2 OS=Chlamydomonas reinhardtii OX=3055 GN=cop4 PE=1 SV=1",
       "source_url": "https://rest.uniprot.org/uniprotkb/Q8RUT8.fasta",
-      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "pocket_map_path": "pocket_maps/ChR2_Cre_full.json"
     },
     {
       "name": "Chrimson_5ZIH_structure",
@@ -168,7 +170,8 @@
       "source_header": "5ZIH_1|Chains A, B|Sensory opsin A,Chrimson|Chlamydomonas reinhardtii (3055)",
       "source_url": "https://www.rcsb.org/fasta/entry/5ZIH/download",
       "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation. Chrimson K176R calibration seed removed pending full-reference numbering resolution.",
-      "starting_lambda_nm": 590
+      "starting_lambda_nm": 590,
+      "pocket_map_path": "pocket_maps/Chrimson_5ZIH_structure.json"
     },
     {
       "name": "GtACR1_6CSM_structure",
@@ -190,7 +193,8 @@
       "source_header": "6CSM_1|Chains A, B, C, D|GtACR1|Guillardia theta CCMP2712 (905079)",
       "source_url": "https://www.rcsb.org/fasta/entry/6CSM/download",
       "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
-      "starting_lambda_nm": 515
+      "starting_lambda_nm": 515,
+      "pocket_map_path": "pocket_maps/GtACR1_6CSM_structure.json"
     },
     {
       "name": "CaRhGC_full",
