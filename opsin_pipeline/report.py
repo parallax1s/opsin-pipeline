@@ -61,6 +61,34 @@ def _min_distance(candidate: Candidate) -> float | None:
     return min(distances) if distances else None
 
 
+def _pocket_signal_label(
+    candidates: list[Candidate], *, use_graded_pocket: bool
+) -> str:
+    """One-line label summarizing which pocket-scoring mode produced these numbers.
+
+    Makes it obvious at a glance whether a report is from the legacy reason-string
+    scoring or the structure-grounded graded scoring (spec §7.5).
+    """
+    if not use_graded_pocket:
+        return "legacy (reason-string binary, flag off)"
+    any_distance = any(
+        m.distance_to_retinal is not None for c in candidates for m in c.mutations
+    )
+    if not any_distance:
+        return "graded requested but no pocket data — fell back to reason-string"
+    fallback_count = sum(
+        1
+        for c in candidates
+        if all(m.distance_to_retinal is None for m in c.mutations)
+    )
+    if fallback_count:
+        return (
+            f"graded (distance bands); {fallback_count} candidates used "
+            "reason-string fallback for lack of pocket data"
+        )
+    return "graded (distance bands) on all candidates"
+
+
 def write_decision_report(
     candidates: list[Candidate],
     scaffolds: list[Scaffold],
@@ -72,6 +100,7 @@ def write_decision_report(
     per_position_cap: int | None = None,
     generation_stats: GenerationStats | None = None,
     calibration_report: CalibrationReport | None = None,
+    use_graded_pocket: bool = False,
 ) -> Path:
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -83,6 +112,7 @@ def write_decision_report(
         top_n=top_n,
     )
     violation_count = sum(1 for c in candidates if c.has_protected_violation)
+    pocket_signal = _pocket_signal_label(candidates, use_graded_pocket=use_graded_pocket)
 
     lines = [
         "# Opsin Pipeline Decision Report",
@@ -93,6 +123,7 @@ def write_decision_report(
         f"- Candidates generated: {len(candidates)}",
         f"- Protected-residue violations: {violation_count}",
         f"- Diversity caps: per_scaffold_cap={per_scaffold_cap}, per_position_cap={per_position_cap}",
+        f"- Pocket signal: {pocket_signal}",
         "",
     ]
 
