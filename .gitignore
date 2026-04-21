@@ -5,3 +5,8 @@ out/
 
 .agent-comms/
 .claude/
+
+# Local PDB / mmCIF downloads (re-fetchable from RCSB; PocketMap JSONs
+# in configs/pocket_maps/ carry pdb_sha256 for reproducibility).
+data/structures/*.pdb
+data/structures/*.cif
