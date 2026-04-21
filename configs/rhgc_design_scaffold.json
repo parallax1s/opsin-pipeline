@@ -1,0 +1,91 @@
+{
+  "scaffolds": [
+    {
+      "name": "BeRhGC1_full",
+      "family": "RhGC",
+      "sequence": "MKDKDNNLRGACSSCNCPEYCFSPTSTLCDDCKCSVTKHPIVEQPLSRNGSFRSSGASLLPSPSSPNVKITSTVGLRSRKSESQANVRGSMISNSNSGSRSNNSGGAGGGSGGSSSSKGGSALANYQSAMSELWSWNMMLSTPSLKFLTVQFTTWIVLTTVGAIYTLFFHERQAYNRGWADIWYGYGAFGFGLGLSFAYMGFTGARNPEKKALSLCLLGVNFISFMSYIIIMLRLTPTIEGTMANPVEPARYLEWIATCPVLILLISEITQYPHDPYKVIVNDYALCLAGFVGAISAQQPWGDLAHFVSCLCFSYVVYSLWSCFTGAIDGETQCNVEKSGLRWIRFSTITTWSLFPITWFSYTSGLISFTVAEAGFSMIDIGAKVFLTLVLVNSTVEQAQNQKVDAITAIAEELENQINNCDAILQKMMPEGVLEQLKNGQATEAKEYESVTVFFSDITNFTVISSRTSTKDMMATLNKLWLEYDAIAKRWGVYKVETIGDAYLGVTGAPDVVPDHAERACNFAVDIIEMIKSFKTITGESINIRIGLNSGPVTAGVLGDLNPHWCLVGDTVNTASRMESTSKAGHIHISESTYHFIKSKFVTQPLDVMEVKGKGKMQTYWVLGRK",
+      "starting_lambda_nm": 540,
+      "target_phenotypes": [
+        "spectral_tuning"
+      ],
+      "assay_architectures": [
+        "biochemical"
+      ],
+      "source_db": "UniProt",
+      "source_id": "A0A060H1D7",
+      "source_header": "tr|A0A060H1D7|A0A060H1D7_BLAEM Bacterio-rhodopsin/guanylyl cyclase 1 fusion protein OS=Blastocladiella emersonii OX=4808 GN=gc1 PE=1 SV=1",
+      "source_url": "https://rest.uniprot.org/uniprotkb/A0A060H1D7.fasta",
+      "notes": "BeRhGC1: Blastocladiella emersonii rhodopsin-guanylyl cyclase (626 aa). Rhodopsin domain ~1-400, linker ~400-490, cyclase domain ~490-626. Schiff-base Lys at K338 (protected). Cyclase catalytic IGDAYL motif at 499. Mutable positions below are HEURISTIC \u2014 selected by rough homology to BR/ChR2 TM3/TM5/TM6 retinal-pocket patterns without a real alignment or structure. Expert review via configs/rhgc_position_review.csv required before design run results are trusted.",
+      "protected_positions": [
+        338,
+        499,
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520,
+        521,
+        522,
+        523,
+        524,
+        525,
+        526,
+        527,
+        528,
+        529,
+        530
+      ],
+      "mutable_positions": [
+        {
+          "position": 181,
+          "allowed": [
+            "E",
+            "N"
+          ],
+          "reason": "retinal_pocket spectral_tuning counterion_candidate HEURISTIC position in TM3 (DIWYGY motif); analogous to BR D85. D->E conservative (charge-preserving, longer sidechain); D->N removes negative charge (expected disruptive)."
+        },
+        {
+          "position": 183,
+          "allowed": [
+            "F",
+            "Y"
+          ],
+          "reason": "retinal_pocket spectral_tuning aromatic_wall HEURISTIC TM3 Trp adjacent to counterion; analogous to BR W86. W->F removes indole NH; W->Y swaps indole for phenol."
+        },
+        {
+          "position": 272,
+          "allowed": [
+            "F",
+            "W"
+          ],
+          "reason": "retinal_pocket spectral_tuning aromatic_tuning HEURISTIC TM5 Tyr in sequence context EITQYPHDP; commonly involved in spectral tuning in microbial opsins. Y->F removes phenolic OH; Y->W larger aromatic."
+        },
+        {
+          "position": 283,
+          "allowed": [
+            "E",
+            "N"
+          ],
+          "reason": "retinal_pocket spectral_tuning proton_donor_candidate HEURISTIC TM6 Asp in NDYAL motif (classic opsin TM6 conserved D); possible analog of BR D96. D->E conservative; D->N removes charge."
+        }
+      ],
+      "plm_predictions_path": "plm_predictions/BeRhGC1_full.json"
+    }
+  ]
+}
