@@ -6,6 +6,12 @@ from pathlib import Path
 from .calibration import evaluate_ranking, load_calibration
 from .generate import generate_candidates
 from .ingest import load_scaffolds
+from .plm.esm import (
+    ESM2Scorer,
+    ModelUnknownError,
+    PLMBackendUnavailableError,
+    SequenceTooLongError,
+)
 from .plm.predictions import write_predictions
 from .plm.scorer import MockPLMScorer, MutationRequest, STANDARD_AAS
 from .position_map import (
@@ -201,9 +207,14 @@ def _add_plm_parser(subparsers: argparse._SubParsersAction) -> None:
         "--model",
         default="esm2_t12_35M_UR50D",
         help=(
-            "Model identifier for the real scorer (default esm2_t12_35M_UR50D). "
-            "Ignored when --mock is passed."
+            "ESM2 model alias (default esm2_t12_35M_UR50D) or full HuggingFace "
+            "repo id. Ignored when --mock is passed."
         ),
+    )
+    plm_parser.add_argument(
+        "--device",
+        default="cpu",
+        help="torch device for the ESM2 forward pass (default cpu). Ignored with --mock.",
     )
 
 
@@ -331,17 +342,21 @@ def _run_plm(args: argparse.Namespace) -> None:
     if args.mock:
         scorer = MockPLMScorer(seed=args.mock_seed)
     else:
-        raise SystemExit(
-            "plm: only --mock is wired in this chunk. The ESM2 backend "
-            "(opsin_pipeline/plm/esm.py) is a follow-up commit gated on "
-            "an optional torch install."
-        )
+        try:
+            scorer = ESM2Scorer(model_alias=args.model, device=args.device)
+        except ModelUnknownError as exc:
+            raise SystemExit(f"plm: {exc}")
 
-    pset = scorer.score(
-        scaffold_name=scaffold.name,
-        sequence=scaffold.sequence,
-        mutations=requests,
-    )
+    try:
+        pset = scorer.score(
+            scaffold_name=scaffold.name,
+            sequence=scaffold.sequence,
+            mutations=requests,
+        )
+    except PLMBackendUnavailableError as exc:
+        raise SystemExit(f"plm: {exc}")
+    except SequenceTooLongError as exc:
+        raise SystemExit(f"plm: {exc}")
     out_path = write_predictions(pset, args.out)
     print(f"Wrote {out_path}")
     print(
