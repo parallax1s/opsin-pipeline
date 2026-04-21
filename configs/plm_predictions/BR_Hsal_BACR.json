@@ -1,77 +1,77 @@
 {
   "scaffold_name": "BR_Hsal_BACR",
   "sequence_sha256": "78c26b0b585d83693169b264daabcc735decfefc8ad7c922e03be7fbf0a74c1a",
-  "model_id": "mock",
+  "model_id": "esm2_t12_35M_UR50D",
   "predictions": [
     {
       "position": 95,
       "from_aa": "R",
       "to_aa": "Q",
-      "log_likelihood_delta": -4.0278,
-      "model_id": "mock"
+      "log_likelihood_delta": -3.2001,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 98,
       "from_aa": "D",
       "to_aa": "E",
-      "log_likelihood_delta": 0.253,
-      "model_id": "mock"
+      "log_likelihood_delta": -3.9249,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 98,
       "from_aa": "D",
       "to_aa": "N",
-      "log_likelihood_delta": -4.8345,
-      "model_id": "mock"
+      "log_likelihood_delta": -3.6947,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 98,
       "from_aa": "D",
       "to_aa": "S",
-      "log_likelihood_delta": -2.3104,
-      "model_id": "mock"
+      "log_likelihood_delta": -2.7236,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 98,
       "from_aa": "D",
       "to_aa": "T",
-      "log_likelihood_delta": -2.3229,
-      "model_id": "mock"
+      "log_likelihood_delta": -2.7014,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 98,
       "from_aa": "D",
       "to_aa": "V",
-      "log_likelihood_delta": -3.626,
-      "model_id": "mock"
+      "log_likelihood_delta": -2.2987,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 109,
       "from_aa": "D",
       "to_aa": "N",
-      "log_likelihood_delta": -1.9222,
-      "model_id": "mock"
+      "log_likelihood_delta": -1.1355,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 109,
       "from_aa": "D",
       "to_aa": "Q",
-      "log_likelihood_delta": -3.6527,
-      "model_id": "mock"
+      "log_likelihood_delta": -1.2462,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 229,
       "from_aa": "K",
       "to_aa": "A",
-      "log_likelihood_delta": -2.0754,
-      "model_id": "mock"
+      "log_likelihood_delta": -0.1686,
+      "model_id": "esm2_t12_35M_UR50D"
     },
     {
       "position": 229,
       "from_aa": "K",
       "to_aa": "G",
-      "log_likelihood_delta": -2.943,
-      "model_id": "mock"
+      "log_likelihood_delta": -1.0459,
+      "model_id": "esm2_t12_35M_UR50D"
     }
   ]
 }
