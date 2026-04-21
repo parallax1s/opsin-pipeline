@@ -1,0 +1,63 @@
+{
+  "scaffold_name": "BeRhGC1_full",
+  "sequence_sha256": "cae3e1a84b31d26eed1965a8b7bb34b95262bb741b094cb291a8896a867adc0f",
+  "model_id": "esm2_t12_35M_UR50D",
+  "predictions": [
+    {
+      "position": 181,
+      "from_aa": "D",
+      "to_aa": "E",
+      "log_likelihood_delta": -3.7387,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 181,
+      "from_aa": "D",
+      "to_aa": "N",
+      "log_likelihood_delta": -3.7636,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 183,
+      "from_aa": "W",
+      "to_aa": "F",
+      "log_likelihood_delta": -2.1563,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 183,
+      "from_aa": "W",
+      "to_aa": "Y",
+      "log_likelihood_delta": -2.5693,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 272,
+      "from_aa": "Y",
+      "to_aa": "F",
+      "log_likelihood_delta": -3.1367,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 272,
+      "from_aa": "Y",
+      "to_aa": "W",
+      "log_likelihood_delta": -4.4374,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 283,
+      "from_aa": "D",
+      "to_aa": "E",
+      "log_likelihood_delta": -2.8482,
+      "model_id": "esm2_t12_35M_UR50D"
+    },
+    {
+      "position": 283,
+      "from_aa": "D",
+      "to_aa": "N",
+      "log_likelihood_delta": -1.8722,
+      "model_id": "esm2_t12_35M_UR50D"
+    }
+  ]
+}
