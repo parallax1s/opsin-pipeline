@@ -1,0 +1,112 @@
+{
+  "scaffold_name": "ChR2_Cre_full",
+  "sequence_sha256": "ea3c1fd10d76731bf3d689384c92477c3e805bb02cf4625ee16a017148be607e",
+  "model_id": "mock",
+  "predictions": [
+    {
+      "position": 90,
+      "from_aa": "E",
+      "to_aa": "A",
+      "log_likelihood_delta": -4.5259,
+      "model_id": "mock"
+    },
+    {
+      "position": 120,
+      "from_aa": "R",
+      "to_aa": "A",
+      "log_likelihood_delta": -3.0145,
+      "model_id": "mock"
+    },
+    {
+      "position": 123,
+      "from_aa": "E",
+      "to_aa": "A",
+      "log_likelihood_delta": -2.4844,
+      "model_id": "mock"
+    },
+    {
+      "position": 123,
+      "from_aa": "E",
+      "to_aa": "T",
+      "log_likelihood_delta": 1.8961,
+      "model_id": "mock"
+    },
+    {
+      "position": 128,
+      "from_aa": "C",
+      "to_aa": "A",
+      "log_likelihood_delta": 0.1257,
+      "model_id": "mock"
+    },
+    {
+      "position": 128,
+      "from_aa": "C",
+      "to_aa": "S",
+      "log_likelihood_delta": 1.8571,
+      "model_id": "mock"
+    },
+    {
+      "position": 128,
+      "from_aa": "C",
+      "to_aa": "T",
+      "log_likelihood_delta": 1.3229,
+      "model_id": "mock"
+    },
+    {
+      "position": 132,
+      "from_aa": "L",
+      "to_aa": "C",
+      "log_likelihood_delta": -4.5114,
+      "model_id": "mock"
+    },
+    {
+      "position": 134,
+      "from_aa": "H",
+      "to_aa": "K",
+      "log_likelihood_delta": -1.0606,
+      "model_id": "mock"
+    },
+    {
+      "position": 134,
+      "from_aa": "H",
+      "to_aa": "R",
+      "log_likelihood_delta": 0.3363,
+      "model_id": "mock"
+    },
+    {
+      "position": 156,
+      "from_aa": "D",
+      "to_aa": "A",
+      "log_likelihood_delta": -2.23,
+      "model_id": "mock"
+    },
+    {
+      "position": 156,
+      "from_aa": "D",
+      "to_aa": "H",
+      "log_likelihood_delta": -0.0379,
+      "model_id": "mock"
+    },
+    {
+      "position": 159,
+      "from_aa": "T",
+      "to_aa": "C",
+      "log_likelihood_delta": -2.2476,
+      "model_id": "mock"
+    },
+    {
+      "position": 159,
+      "from_aa": "T",
+      "to_aa": "S",
+      "log_likelihood_delta": -0.9519,
+      "model_id": "mock"
+    },
+    {
+      "position": 257,
+      "from_aa": "K",
+      "to_aa": "A",
+      "log_likelihood_delta": -2.4919,
+      "model_id": "mock"
+    }
+  ]
+}
