@@ -105,6 +105,16 @@ def _add_run_parser(subparsers: argparse._SubParsersAction) -> None:
         default=20,
         help="Top-k used by the calibration evaluator.",
     )
+    run_parser.add_argument(
+        "--graded-pocket",
+        action="store_true",
+        help=(
+            "Use structure-grounded graded pocket scoring (bands strong <=4 A / "
+            "medium <=5.5 A / none) instead of the legacy reason-string rule. "
+            "Requires scaffolds with a pocket_map_path. Default OFF until the "
+            "literature calibration set demonstrates it improves AUROC."
+        ),
+    )
 
 
 def _add_pocket_parser(subparsers: argparse._SubParsersAction) -> None:
@@ -261,6 +271,7 @@ def _run_pipeline(args: argparse.Namespace) -> None:
         scaffolds,
         target_family=args.target_family,
         target_phenotype=args.target_phenotype,
+        use_graded_pocket=args.graded_pocket,
     )
 
     calibration_report = None
@@ -283,6 +294,7 @@ def _run_pipeline(args: argparse.Namespace) -> None:
         per_position_cap=args.per_position_cap,
         generation_stats=gen_stats,
         calibration_report=calibration_report,
+        use_graded_pocket=args.graded_pocket,
     )
     print(f"Wrote {csv_path}")
     print(f"Wrote {report_path}")
