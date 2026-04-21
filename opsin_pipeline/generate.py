@@ -103,6 +103,8 @@ def _build_mutations(
                 from_aa=from_aa,
                 to_aa=to_aa,
                 reason=mutable.reason,
+                distance_to_retinal=mutable.distance_to_retinal,
+                role=mutable.role,
             )
         )
     return mutations

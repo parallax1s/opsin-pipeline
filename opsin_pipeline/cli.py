@@ -6,15 +6,64 @@ from pathlib import Path
 from .calibration import evaluate_ranking, load_calibration
 from .generate import generate_candidates
 from .ingest import load_scaffolds
-from .position_map import apply_position_map_to_scaffolds, write_draft_position_map
+from .position_map import (
+    UnmappedPocketMapError,
+    annotate_with_pocket,
+    apply_position_map_to_scaffolds,
+    write_draft_position_map,
+)
 from .report import write_candidate_csv, write_decision_report
 from .score import rank_candidates
+from .structure.ligands import identify_ligands
+from .structure.pdb import parse_pdb
+from .structure.pocket import (
+    DEFAULT_CUTOFF_A,
+    DEFAULT_MEDIUM_MAX_A,
+    DEFAULT_STRONG_MAX_A,
+    apply_offset_mapping,
+    compute_pocket,
+    write_pocket_map,
+)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the local opsin MVP pipeline")
     subparsers = parser.add_subparsers(dest="command")
 
+    _add_run_parser(subparsers)
+    _add_pocket_parser(subparsers)
+    _add_pocket_annotate_parser(subparsers)
+    _add_draft_map_parser(subparsers)
+    _add_apply_map_parser(subparsers)
+
+    args = parser.parse_args()
+
+    if args.command == "draft-position-map":
+        scaffolds = load_scaffolds(args.scaffolds)
+        path = write_draft_position_map(scaffolds, args.out)
+        print(f"Wrote {path}")
+        return
+
+    if args.command == "apply-position-map":
+        path = apply_position_map_to_scaffolds(args.scaffolds, args.position_map, args.out)
+        print(f"Wrote {path}")
+        return
+
+    if args.command == "pocket":
+        _run_pocket(args)
+        return
+
+    if args.command == "pocket-annotate":
+        _run_pocket_annotate(args)
+        return
+
+    if args.command is None:
+        parser.error("a command is required")
+
+    _run_pipeline(args)
+
+
+def _add_run_parser(subparsers: argparse._SubParsersAction) -> None:
     run_parser = subparsers.add_parser("run", help="Generate, score, and report candidates")
     run_parser.add_argument("--scaffolds", required=True, help="Path to scaffold JSON")
     run_parser.add_argument("--out", required=True, help="Output directory")
@@ -57,10 +106,78 @@ def main() -> None:
         help="Top-k used by the calibration evaluator.",
     )
 
+
+def _add_pocket_parser(subparsers: argparse._SubParsersAction) -> None:
+    pocket_parser = subparsers.add_parser(
+        "pocket",
+        help="Parse a PDB and write a PocketMap JSON for review / scaffold merge",
+    )
+    pocket_parser.add_argument("--scaffold", required=True, help="Scaffold name (goes into PocketMap)")
+    pocket_parser.add_argument("--pdb", required=True, help="Path to a PDB file")
+    pocket_parser.add_argument("--out", required=True, help="Output JSON path")
+    pocket_parser.add_argument(
+        "--pdb-chain",
+        default=None,
+        help="Chain to analyze (ligand + protein residues). Required if the PDB has multiple chains with retinal.",
+    )
+    pocket_parser.add_argument(
+        "--pdb-offset",
+        type=int,
+        default=None,
+        help="Apply seq_index = pdb_resnum + offset to every pocket residue.",
+    )
+    pocket_parser.add_argument(
+        "--scaffolds",
+        default=None,
+        help="Optional scaffold JSON for AA-identity verification when --pdb-offset is given.",
+    )
+    pocket_parser.add_argument(
+        "--strict-mapping",
+        action="store_true",
+        help="With --pdb-offset + --scaffolds, promote AA mismatches from warnings to hard errors.",
+    )
+    pocket_parser.add_argument(
+        "--cutoff",
+        type=float,
+        default=DEFAULT_CUTOFF_A,
+        help=f"Outer radius for pocket residue inclusion (A). Default {DEFAULT_CUTOFF_A}.",
+    )
+    pocket_parser.add_argument(
+        "--strong-max",
+        type=float,
+        default=DEFAULT_STRONG_MAX_A,
+        help=f"Upper bound of the 'strong' band (A). Default {DEFAULT_STRONG_MAX_A}.",
+    )
+    pocket_parser.add_argument(
+        "--medium-max",
+        type=float,
+        default=DEFAULT_MEDIUM_MAX_A,
+        help=f"Upper bound of the 'medium' band (A). Default {DEFAULT_MEDIUM_MAX_A}.",
+    )
+    pocket_parser.add_argument(
+        "--allow-weird-ligand",
+        action="store_true",
+        help="Skip the 15-25 heavy-atom sanity check for the retinal ligand.",
+    )
+
+
+def _add_pocket_annotate_parser(subparsers: argparse._SubParsersAction) -> None:
+    annotate = subparsers.add_parser(
+        "pocket-annotate",
+        help="Merge PocketMap evidence into an existing draft position-map CSV",
+    )
+    annotate.add_argument("--position-map", required=True, help="Input draft position-map CSV")
+    annotate.add_argument("--pocket-map", required=True, help="PocketMap JSON (must have seq_index)")
+    annotate.add_argument("--out", required=True, help="Output CSV path")
+
+
+def _add_draft_map_parser(subparsers: argparse._SubParsersAction) -> None:
     draft_parser = subparsers.add_parser("draft-position-map", help="Write a draft review CSV")
     draft_parser.add_argument("--scaffolds", required=True, help="Path to scaffold JSON")
     draft_parser.add_argument("--out", required=True, help="Output CSV path")
 
+
+def _add_apply_map_parser(subparsers: argparse._SubParsersAction) -> None:
     apply_parser = subparsers.add_parser(
         "apply-position-map",
         help="Apply reviewed positions to a scaffold JSON file",
@@ -69,21 +186,70 @@ def main() -> None:
     apply_parser.add_argument("--position-map", required=True, help="Reviewed position CSV")
     apply_parser.add_argument("--out", required=True, help="Output scaffold JSON")
 
-    args = parser.parse_args()
-    if args.command == "draft-position-map":
-        scaffolds = load_scaffolds(args.scaffolds)
-        path = write_draft_position_map(scaffolds, args.out)
-        print(f"Wrote {path}")
-        return
 
-    if args.command == "apply-position-map":
-        path = apply_position_map_to_scaffolds(args.scaffolds, args.position_map, args.out)
-        print(f"Wrote {path}")
-        return
+def _run_pocket(args: argparse.Namespace) -> None:
+    pdb_path = Path(args.pdb)
+    atoms = parse_pdb(pdb_path)
+    matches = identify_ligands(
+        atoms,
+        preferred_chain=args.pdb_chain,
+        allow_weird_ligand=args.allow_weird_ligand,
+        path_hint=str(pdb_path),
+    )
+    pocket_map = compute_pocket(
+        atoms,
+        matches,
+        scaffold_name=args.scaffold,
+        pdb_path=str(pdb_path),
+        pdb_chain=args.pdb_chain,
+        cutoff_A=args.cutoff,
+        strong_max_A=args.strong_max,
+        medium_max_A=args.medium_max,
+    )
 
-    if args.command is None:
-        parser.error("a command is required")
+    if args.pdb_offset is not None:
+        scaffold_sequence: str | None = None
+        if args.scaffolds:
+            scaffold_by_name = {s.name: s for s in load_scaffolds(args.scaffolds)}
+            if args.scaffold not in scaffold_by_name:
+                raise SystemExit(
+                    f"Scaffold {args.scaffold!r} not found in {args.scaffolds}; cannot verify AA identity."
+                )
+            scaffold_sequence = scaffold_by_name[args.scaffold].sequence
+        pocket_map = apply_offset_mapping(
+            pocket_map,
+            offset=args.pdb_offset,
+            scaffold_sequence=scaffold_sequence,
+            strict=args.strict_mapping,
+        )
 
+    out_path = write_pocket_map(pocket_map, args.out)
+    print(f"Wrote {out_path}")
+    print(
+        f"  {len(pocket_map.pocket_residues)} pocket residues, "
+        f"{sum(1 for r in pocket_map.pocket_residues if r.band == 'strong')} strong, "
+        f"{sum(1 for r in pocket_map.pocket_residues if r.band == 'medium')} medium."
+    )
+    mismatches = [r for r in pocket_map.pocket_residues if r.mapping_note]
+    if mismatches:
+        print(f"  {len(mismatches)} mapping mismatches — review_needed")
+        for r in mismatches[:5]:
+            print(f"    {r.mapping_note}")
+
+
+def _run_pocket_annotate(args: argparse.Namespace) -> None:
+    try:
+        out_path = annotate_with_pocket(
+            position_map_path=args.position_map,
+            pocket_map_path=args.pocket_map,
+            output_path=args.out,
+        )
+    except UnmappedPocketMapError as exc:
+        raise SystemExit(f"pocket-annotate: {exc}")
+    print(f"Wrote {out_path}")
+
+
+def _run_pipeline(args: argparse.Namespace) -> None:
     scaffolds = load_scaffolds(args.scaffolds)
     candidates, gen_stats = generate_candidates(
         scaffolds,
