@@ -6,6 +6,8 @@ from pathlib import Path
 from .calibration import evaluate_ranking, load_calibration
 from .generate import generate_candidates
 from .ingest import load_scaffolds
+from .plm.predictions import write_predictions
+from .plm.scorer import MockPLMScorer, MutationRequest, STANDARD_AAS
 from .position_map import (
     UnmappedPocketMapError,
     annotate_with_pocket,
@@ -33,6 +35,7 @@ def main() -> None:
     _add_run_parser(subparsers)
     _add_pocket_parser(subparsers)
     _add_pocket_annotate_parser(subparsers)
+    _add_plm_parser(subparsers)
     _add_draft_map_parser(subparsers)
     _add_apply_map_parser(subparsers)
 
@@ -55,6 +58,10 @@ def main() -> None:
 
     if args.command == "pocket-annotate":
         _run_pocket_annotate(args)
+        return
+
+    if args.command == "plm":
+        _run_plm(args)
         return
 
     if args.command is None:
@@ -171,6 +178,35 @@ def _add_pocket_parser(subparsers: argparse._SubParsersAction) -> None:
     )
 
 
+def _add_plm_parser(subparsers: argparse._SubParsersAction) -> None:
+    plm_parser = subparsers.add_parser(
+        "plm",
+        help="Produce a PLMPredictionSet JSON for a scaffold's mutable positions",
+    )
+    plm_parser.add_argument("--scaffold", required=True, help="Scaffold name to score")
+    plm_parser.add_argument("--scaffolds", required=True, help="Scaffold JSON file")
+    plm_parser.add_argument("--out", required=True, help="Output JSON path")
+    plm_parser.add_argument(
+        "--mock",
+        action="store_true",
+        help="Use the deterministic MockPLMScorer (no torch, no network).",
+    )
+    plm_parser.add_argument(
+        "--mock-seed",
+        type=int,
+        default=0,
+        help="Seed for MockPLMScorer (default 0).",
+    )
+    plm_parser.add_argument(
+        "--model",
+        default="esm2_t12_35M_UR50D",
+        help=(
+            "Model identifier for the real scorer (default esm2_t12_35M_UR50D). "
+            "Ignored when --mock is passed."
+        ),
+    )
+
+
 def _add_pocket_annotate_parser(subparsers: argparse._SubParsersAction) -> None:
     annotate = subparsers.add_parser(
         "pocket-annotate",
@@ -245,6 +281,83 @@ def _run_pocket(args: argparse.Namespace) -> None:
         print(f"  {len(mismatches)} mapping mismatches — review_needed")
         for r in mismatches[:5]:
             print(f"    {r.mapping_note}")
+
+
+def _run_plm(args: argparse.Namespace) -> None:
+    scaffolds = load_scaffolds(args.scaffolds)
+    scaffold_by_name = {s.name: s for s in scaffolds}
+    if args.scaffold not in scaffold_by_name:
+        raise SystemExit(
+            f"plm: scaffold {args.scaffold!r} not found in {args.scaffolds}. "
+            f"Available: {sorted(scaffold_by_name)}"
+        )
+    scaffold = scaffold_by_name[args.scaffold]
+
+    if len(scaffold.sequence) > 1024:
+        raise SystemExit(
+            f"plm: scaffold sequence length {len(scaffold.sequence)} exceeds the "
+            "1024-residue ESM2 context window. Long-sequence handling is deferred "
+            "per spec §12b."
+        )
+
+    # Build mutation requests from mutable_positions. Skip silent ones so downstream
+    # JSON doesn't carry pointless zero deltas.
+    requests: list[MutationRequest] = []
+    for mutable in scaffold.mutable_positions:
+        from_aa = scaffold.residue_at(mutable.position)
+        if from_aa not in STANDARD_AAS:
+            raise SystemExit(
+                f"plm: scaffold {scaffold.name!r} has non-standard residue {from_aa!r} "
+                f"at position {mutable.position}; only the standard 20 amino acids "
+                "are supported (spec §9 hard error)."
+            )
+        for to_aa in mutable.allowed:
+            to_upper = to_aa.upper()
+            if to_upper == from_aa:
+                continue
+            if to_upper not in STANDARD_AAS:
+                raise SystemExit(
+                    f"plm: target residue {to_upper!r} at position {mutable.position} "
+                    "is not one of the standard 20 amino acids."
+                )
+            requests.append(MutationRequest(position=mutable.position, from_aa=from_aa, to_aa=to_upper))
+
+    if not requests:
+        print(
+            f"plm: scaffold {scaffold.name} has no non-silent mutations in its "
+            "mutable_positions; writing empty PLMPredictionSet."
+        )
+
+    if args.mock:
+        scorer = MockPLMScorer(seed=args.mock_seed)
+    else:
+        raise SystemExit(
+            "plm: only --mock is wired in this chunk. The ESM2 backend "
+            "(opsin_pipeline/plm/esm.py) is a follow-up commit gated on "
+            "an optional torch install."
+        )
+
+    pset = scorer.score(
+        scaffold_name=scaffold.name,
+        sequence=scaffold.sequence,
+        mutations=requests,
+    )
+    out_path = write_predictions(pset, args.out)
+    print(f"Wrote {out_path}")
+    print(
+        f"  {len(pset.predictions)} predictions via {pset.model_id}; "
+        f"median delta {_median([p.log_likelihood_delta for p in pset.predictions])}"
+    )
+
+
+def _median(values: list[float]) -> float:
+    if not values:
+        return 0.0
+    sorted_vals = sorted(values)
+    mid = len(sorted_vals) // 2
+    if len(sorted_vals) % 2:
+        return round(sorted_vals[mid], 4)
+    return round((sorted_vals[mid - 1] + sorted_vals[mid]) / 2, 4)
 
 
 def _run_pocket_annotate(args: argparse.Namespace) -> None:

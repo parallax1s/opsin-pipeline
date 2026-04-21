@@ -5,6 +5,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
+from .plm.predictions import PLMPredictionSet, deltas_by_position, read_predictions
 from .schemas import MutablePosition, Scaffold
 from .structure.pocket import PocketMap, read_pocket_map
 
@@ -39,6 +40,16 @@ def _parse_scaffold(record: dict[str, Any], *, base: Path) -> Scaffold:
         pocket_map = read_pocket_map(resolved)
         mutable_positions = _merge_pocket_map(mutable_positions, pocket_map)
 
+    plm_predictions_path = record.get("plm_predictions_path")
+    if plm_predictions_path:
+        resolved = (
+            (base / plm_predictions_path)
+            if not Path(plm_predictions_path).is_absolute()
+            else Path(plm_predictions_path)
+        )
+        pset = read_predictions(resolved)
+        mutable_positions = _merge_plm_predictions(mutable_positions, pset)
+
     metadata = {
         key: value
         for key, value in record.items()
@@ -53,6 +64,7 @@ def _parse_scaffold(record: dict[str, Any], *, base: Path) -> Scaffold:
             "mutable_positions",
             "starting_lambda_nm",
             "pocket_map_path",
+            "plm_predictions_path",
         }
     }
 
@@ -70,6 +82,7 @@ def _parse_scaffold(record: dict[str, Any], *, base: Path) -> Scaffold:
             else None
         ),
         pocket_map_path=str(pocket_map_path) if pocket_map_path else None,
+        plm_predictions_path=str(plm_predictions_path) if plm_predictions_path else None,
         metadata=metadata,
     )
 
@@ -98,4 +111,35 @@ def _merge_pocket_map(
                 role=pocket_residue.role,
             )
         )
+    return merged
+
+
+def _merge_plm_predictions(
+    positions: list[MutablePosition], pset: PLMPredictionSet
+) -> list[MutablePosition]:
+    """Attach a per-position ``{to_aa: delta}`` dict from the PLM prediction set.
+
+    Each position gets a filtered dict containing only the target AAs listed in
+    that position's ``allowed`` list; deltas for unlisted AAs are dropped so the
+    generator doesn't see stale predictions. Positions with no matching entries
+    keep ``plm_log_likelihood_deltas=None`` rather than gain an empty dict — this
+    lets the scorer distinguish "no PLM data" (fallback) from "PLM ran, nothing
+    interesting" (would be weird but legal).
+    """
+    grouped = deltas_by_position(pset)
+    merged: list[MutablePosition] = []
+    for pos in positions:
+        position_deltas = grouped.get(pos.position)
+        if not position_deltas:
+            merged.append(pos)
+            continue
+        filtered = {
+            to_aa.upper(): position_deltas[to_aa.upper()]
+            for to_aa in pos.allowed
+            if to_aa.upper() in position_deltas
+        }
+        if not filtered:
+            merged.append(pos)
+            continue
+        merged.append(replace(pos, plm_log_likelihood_deltas=filtered))
     return merged
