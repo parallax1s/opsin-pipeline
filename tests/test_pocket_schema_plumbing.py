@@ -104,6 +104,47 @@ class OffsetMappingTests(unittest.TestCase):
                 pocket, offset=10, scaffold_sequence=scaffold_seq, strict=True
             )
 
+    def test_out_of_bounds_seq_index_is_flagged_not_silent(self):
+        """Regression: apply_offset_mapping used to silently accept seq_index outside
+        the scaffold sequence. Now it records a mapping_note so downstream reviewers
+        notice (and with strict=True it becomes a hard error)."""
+        pocket = self._pocket()
+        # fixture has pdb_resnums 1..6; offset 100 pushes them to 101..106.
+        # Against a 10-residue scaffold, every residue is out of bounds.
+        scaffold_seq = "MKTAYIAKQR"
+
+        mapped = apply_offset_mapping(
+            pocket, offset=100, scaffold_sequence=scaffold_seq, strict=False
+        )
+
+        self.assertTrue(
+            all(r.mapping_note is not None for r in mapped.pocket_residues),
+            "every out-of-bounds residue must carry a mapping_note",
+        )
+        for r in mapped.pocket_residues:
+            self.assertIn("outside scaffold length", r.mapping_note)
+
+    def test_out_of_bounds_strict_raises(self):
+        pocket = self._pocket()
+        scaffold_seq = "MKTAYIAKQR"
+
+        with self.assertRaises(ValueError) as ctx:
+            apply_offset_mapping(
+                pocket, offset=100, scaffold_sequence=scaffold_seq, strict=True
+            )
+        self.assertIn("outside scaffold length", str(ctx.exception))
+
+    def test_without_scaffold_sequence_no_bounds_check(self):
+        """Back-compat: callers who don't pass scaffold_sequence still get raw
+        seq_index = pdb_resnum + offset with no bounds checking or AA verification."""
+        pocket = self._pocket()
+
+        mapped = apply_offset_mapping(pocket, offset=1000)
+
+        for r in mapped.pocket_residues:
+            self.assertIsNone(r.mapping_note)
+            self.assertEqual(r.seq_index, r.pdb_resnum + 1000)
+
 
 class ScaffoldIngestMergeTests(unittest.TestCase):
     def _write_pocket_map(self, directory: Path) -> Path:

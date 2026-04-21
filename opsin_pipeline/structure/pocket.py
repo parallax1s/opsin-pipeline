@@ -355,13 +355,17 @@ def apply_offset_mapping(
 ) -> PocketMap:
     """Return a copy with ``seq_index = pdb_resnum + offset`` on every residue.
 
-    If ``scaffold_sequence`` is provided, the residue's one-letter code is checked
-    against the scaffold at that index; mismatches set ``mapping_note`` and leave
-    ``seq_index`` populated, unless ``strict=True`` in which case a ValueError is
-    raised on the first mismatch.
+    If ``scaffold_sequence`` is provided:
 
-    Insertion codes are rejected: callers with insertion codes must use
-    ``apply_mapping_table`` instead.
+    - the resulting ``seq_index`` must land inside ``[1, len(scaffold_sequence)]``.
+      Out-of-bounds indices are flagged via ``mapping_note`` + ``review_needed=true``
+      (or raised under ``strict=True``) — never silently written.
+    - the residue's one-letter code is checked against the scaffold at that index;
+      mismatches are handled the same way.
+
+    Insertion codes are rejected outright: the scalar offset mode cannot represent
+    non-scalar numbering, so any pocket residue carrying an insertion code raises
+    ``ValueError``. A per-residue mapping table is deferred — see spec §12b.
     """
     new_residues: list[PocketResidue] = []
     for r in pocket_map.pocket_residues:
@@ -369,21 +373,32 @@ def apply_offset_mapping(
             raise ValueError(
                 f"apply_offset_mapping cannot handle insertion codes "
                 f"(chain {r.pdb_chain} resnum {r.pdb_resnum}{r.pdb_ins_code}). "
-                "Use apply_mapping_table."
+                "Non-scalar numbering requires a per-residue mapping table, "
+                "which is deferred — see spec §12b."
             )
         seq_index = r.pdb_resnum + offset
         note: str | None = None
-        if scaffold_sequence is not None and 1 <= seq_index <= len(scaffold_sequence):
-            scaffold_aa = scaffold_sequence[seq_index - 1].upper()
-            if r.res_name_one.upper() != scaffold_aa and r.res_name_one != "X":
+        if scaffold_sequence is not None:
+            if seq_index < 1 or seq_index > len(scaffold_sequence):
                 msg = (
-                    f"PDB chain {r.pdb_chain} resnum {r.pdb_resnum} is "
-                    f"{r.res_name_one} ({r.res_name_three}) but scaffold position "
-                    f"{seq_index} is {scaffold_aa}"
+                    f"seq_index {seq_index} (from PDB chain {r.pdb_chain} resnum "
+                    f"{r.pdb_resnum} + offset {offset}) is outside scaffold length "
+                    f"{len(scaffold_sequence)}"
                 )
                 if strict:
                     raise ValueError(msg)
                 note = msg
+            else:
+                scaffold_aa = scaffold_sequence[seq_index - 1].upper()
+                if r.res_name_one.upper() != scaffold_aa and r.res_name_one != "X":
+                    msg = (
+                        f"PDB chain {r.pdb_chain} resnum {r.pdb_resnum} is "
+                        f"{r.res_name_one} ({r.res_name_three}) but scaffold position "
+                        f"{seq_index} is {scaffold_aa}"
+                    )
+                    if strict:
+                        raise ValueError(msg)
+                    note = msg
         new_residues.append(
             PocketResidue(
                 pdb_chain=r.pdb_chain,

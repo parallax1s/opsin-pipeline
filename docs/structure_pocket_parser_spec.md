@@ -183,9 +183,10 @@ This is the single most error-prone surface and the one the spec must nail down.
 ### 6.2 Rules
 
 1. **The parser emits PDB author numbering only.** Chain, resnum, insertion code. It never silently produces a `seq_index` for the scaffold.
-2. **Reconciliation is a separate, explicit step.** The caller provides one of:
+2. **Reconciliation is a separate, explicit step.** Stage 1 implements **one** reconciliation mode:
    - `--pdb-offset N`: scalar offset such that `seq_index = pdb_resnum + N` for the selected chain. No insertion codes allowed when using an offset; the presence of an insertion code on any pocket residue becomes a hard error in this mode.
-   - `--pdb-mapping path/to/mapping.csv`: explicit table with columns `pdb_chain, pdb_resnum, pdb_ins_code, seq_index`. One row per residue the caller wants mapped. Residues not in the mapping are emitted in PDB numbering and marked `review_needed=true`.
+
+   A per-residue mapping table (`--pdb-mapping`) is explicitly deferred — see §12b. Callers whose PDB needs non-scalar reconciliation (e.g. fusion constructs with inserted T4L/BRIL blocks renumbering mid-chain) currently have to pre-process numbering externally or split the PDB.
 3. **Verification.** Whichever method produced `seq_index`, the parser must check `scaffold.residue_at(seq_index) == pdb_amino_acid`. Any disagreement (e.g., crystal construct has `C128T` but scaffold has `C128`) is flagged: the pocket residue is still emitted, but `review_needed=true` and the mismatch recorded in a `mapping_note` field. Default behavior: **warn and continue**; with `--strict-mapping` the mismatch becomes a hard error.
 4. **No fallback to pairwise alignment in this chunk.** If the caller provides neither an offset nor a mapping, the parser emits PDB-numbered `PocketMap` only. The review workflow (§8) can still consume it — it just stays in PDB numbering.
 5. **Two output shapes, depending on mapping availability.**
@@ -291,7 +292,7 @@ python3 -m opsin_pipeline.cli pocket-annotate \
 
 `pocket-annotate` writes the columns listed in §6.3 onto the matching scaffold rows. Human review then proceeds as today via `apply-position-map`.
 
-**Case B — unmapped pocket evidence.** If the `PocketMap` lacks `seq_index` data, `pocket-annotate` refuses to run and prints the path to the PDB-numbered evidence file (§6.2 rule 5). The user must supply an offset or mapping (usually by re-running `cli pocket` with `--pdb-offset` or `--pdb-mapping`) before the evidence can reach the scaffold CSV. **No silent partial annotation.**
+**Case B — unmapped pocket evidence.** If the `PocketMap` lacks `seq_index` data, `pocket-annotate` refuses to run and prints the path to the PDB-numbered evidence file (§6.2 rule 5). The user must supply an offset (by re-running `cli pocket` with `--pdb-offset`) before the evidence can reach the scaffold CSV. **No silent partial annotation.**
 
 Note: this is a new subcommand, not a flag on `draft-position-map`. Keeping the two steps distinct avoids mixing unreviewed geometric evidence with the human-curated `mutable`/`protected` decisions.
 
@@ -335,7 +336,7 @@ Unchanged: **`diversify.py`, `calibration.py`**. Neither reads pocket data; both
 | Zero retinal-like ligands matched | hard | `NoRetinalLigandError` listing HETATM codes seen |
 | ≥2 retinal ligands, no `--pdb-chain` | soft | warn, pick first by (chain, resnum); emit all matches |
 | Ligand heavy-atom count out of range (<15 or >25) | hard | `LigandShapeError` unless `--allow-weird-ligand` |
-| Insertion code present but `--pdb-offset` used | hard | `NumberingError` — force user to switch to `--pdb-mapping` |
+| Insertion code present but `--pdb-offset` used | hard | `NumberingError` — requires per-residue mapping (§12b), deferred for now |
 | PDB residue AA ≠ scaffold AA at mapped `seq_index` | soft by default | record `mapping_note`, `review_needed=true`; hard with `--strict-mapping` |
 | Chain requested via `--pdb-chain X` absent | hard | `MissingChainError` |
 | Alternate-location atoms | silent | keep highest occupancy (ties: alt_loc `A`) |
@@ -383,7 +384,7 @@ We do **not** commit full-size real PDBs. Anyone running against full structures
   - synthetic fixture: exact band counts, min-distance values match hand calculation.
   - real fixture: residues known to be in BR pocket come out strong/medium.
   - `--pdb-offset` mode: `seq_index = pdb_resnum + offset`, AA verification fires on a crafted mismatch.
-  - `--pdb-mapping` mode: residues in the map get `seq_index`; residues outside get `review_needed=true`.
+  - `--pdb-offset` with a `seq_index` outside the scaffold's sequence length records a `mapping_note` / `review_needed=true` (and hard-errors under `--strict-mapping`).
   - insertion code + `--pdb-offset` raises `NumberingError`.
 - `test_score_graded_pocket.py`
   - scaffold with pocket map: `K→F` at a `strong` position scores +2, at a `medium` position scores +1.
@@ -414,6 +415,7 @@ If curating the calibration set drags on, the parser branch still lands on its o
 ## 12b. Still deferred
 
 - **mmCIF / PDBx.** RCSB's default format. Not in this chunk; expected follow-up within 1–2 iterations. The `structure/` module layout leaves room for `cif.py` next to `pdb.py`.
+- **Per-residue mapping table (`--pdb-mapping` / `apply_mapping_table`).** Motivating case: fusion constructs where a block of inserted residues (T4L, BRIL) renumbers the middle of the chain. Stage 1 only implements `--pdb-offset` (scalar shift); non-scalar PDBs need pre-processing until a mapping-table loader is implemented. CSV schema sketched in §6.2 rule 2's earlier revision (`pdb_chain, pdb_resnum, pdb_ins_code, seq_index`) is a sensible starting point for the eventual implementation.
 
 ## 13. What this chunk does NOT do
 

@@ -74,10 +74,9 @@ def annotate_with_pocket(
 ) -> Path:
     """Merge pocket evidence into a draft position-map CSV (Case A in spec §8.2).
 
-    The PocketMap must carry ``seq_index`` on its residues (i.e. an offset or
-    mapping was applied when it was created). If not, UnmappedPocketMapError is
-    raised; the caller must re-run ``cli pocket`` with --pdb-offset or
-    --pdb-mapping first.
+    The PocketMap must carry ``seq_index`` on its residues (i.e. an offset was
+    applied when it was created). If not, UnmappedPocketMapError is raised;
+    the caller must re-run ``cli pocket`` with ``--pdb-offset`` first.
 
     ``mutable`` and ``protected`` are never written by this step — they remain
     human-controlled.
@@ -89,9 +88,9 @@ def annotate_with_pocket(
     if not pocket_by_index:
         raise UnmappedPocketMapError(
             f"Pocket map {pocket_map_path} has no seq_index on any residue. "
-            "Re-run `cli pocket` with --pdb-offset or --pdb-mapping so the "
-            "evidence can be joined to scaffold rows; the unmapped evidence "
-            "file stays in PDB numbering and is not merged into scaffold CSVs."
+            "Re-run `cli pocket` with --pdb-offset so the evidence can be "
+            "joined to scaffold rows; the unmapped evidence file stays in "
+            "PDB numbering and is not merged into scaffold CSVs."
         )
 
     rows = _read_rows(position_map_path)
