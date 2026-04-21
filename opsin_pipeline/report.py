@@ -26,6 +26,7 @@ def write_candidate_csv(
         "total_score",
         "starting_lambda_nm",
         "min_distance_to_retinal_A",
+        "min_plm_log_likelihood_delta",
         "has_protected_violation",
         "tags",
         "reason",
@@ -36,6 +37,7 @@ def write_candidate_csv(
         for candidate in candidates:
             lam = scaffold_lambda.get(candidate.scaffold_name)
             min_dist = _min_distance(candidate)
+            min_plm = _min_plm_delta(candidate)
             writer.writerow(
                 {
                     "candidate_id": candidate.candidate_id,
@@ -46,6 +48,7 @@ def write_candidate_csv(
                     "total_score": candidate.scores.get("total", 0.0),
                     "starting_lambda_nm": "" if lam is None else lam,
                     "min_distance_to_retinal_A": "" if min_dist is None else f"{min_dist:.2f}",
+                    "min_plm_log_likelihood_delta": "" if min_plm is None else f"{min_plm:.3f}",
                     "has_protected_violation": int(candidate.has_protected_violation),
                     "tags": ";".join(candidate.tags),
                     "reason": candidate.reason_summary,
@@ -59,6 +62,21 @@ def _min_distance(candidate: Candidate) -> float | None:
         m.distance_to_retinal for m in candidate.mutations if m.distance_to_retinal is not None
     ]
     return min(distances) if distances else None
+
+
+def _min_plm_delta(candidate: Candidate) -> float | None:
+    """Worst-case plausibility across the candidate's mutations (spec §12.3).
+
+    Lower = less plausible. ``min`` is chosen so a candidate with any extremely
+    implausible mutation is visibly flagged in the CSV; aligns with how
+    ``min_distance_to_retinal_A`` already aggregates.
+    """
+    deltas = [
+        m.plm_log_likelihood_delta
+        for m in candidate.mutations
+        if m.plm_log_likelihood_delta is not None
+    ]
+    return min(deltas) if deltas else None
 
 
 def _pocket_signal_label(

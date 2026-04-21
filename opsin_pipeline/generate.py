@@ -97,6 +97,9 @@ def _build_mutations(
         from_aa = scaffold.residue_at(mutable.position)
         if to_aa == from_aa:
             continue
+        plm_delta: float | None = None
+        if mutable.plm_log_likelihood_deltas is not None:
+            plm_delta = mutable.plm_log_likelihood_deltas.get(to_aa)
         mutations.append(
             Mutation(
                 position=mutable.position,
@@ -105,6 +108,7 @@ def _build_mutations(
                 reason=mutable.reason,
                 distance_to_retinal=mutable.distance_to_retinal,
                 role=mutable.role,
+                plm_log_likelihood_delta=plm_delta,
             )
         )
     return mutations

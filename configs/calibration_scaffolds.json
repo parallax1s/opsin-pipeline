@@ -55,7 +55,8 @@
       "source_header": "sp|P02945|BACR_HALSA Bacteriorhodopsin OS=Halobacterium salinarum (strain ATCC 700922 / JCM 11081 / NRC-1) OX=64091 GN=bop PE=1 SV=2",
       "source_url": "https://rest.uniprot.org/uniprotkb/P02945.fasta",
       "notes": "Calibration scaffold for bacteriorhodopsin literature mutants. Calibration positions use full UniProt indexing; mature BR labels are shifted by +13 (R82->95, D85->98, D96->109, K216->229).",
-      "pocket_map_path": "pocket_maps/BR_Hsal_BACR.json"
+      "pocket_map_path": "pocket_maps/BR_Hsal_BACR.json",
+      "plm_predictions_path": "plm_predictions/BR_Hsal_BACR.json"
     },
     {
       "name": "ChR2_Cre_full",
@@ -148,7 +149,8 @@
       "source_header": "tr|Q8RUT8|Q8RUT8_CHLRE Archaeal-type opsin 2 OS=Chlamydomonas reinhardtii OX=3055 GN=cop4 PE=1 SV=1",
       "source_url": "https://rest.uniprot.org/uniprotkb/Q8RUT8.fasta",
       "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
-      "pocket_map_path": "pocket_maps/ChR2_Cre_full.json"
+      "pocket_map_path": "pocket_maps/ChR2_Cre_full.json",
+      "plm_predictions_path": "plm_predictions/ChR2_Cre_full.json"
     },
     {
       "name": "Chrimson_5ZIH_structure",
@@ -171,7 +173,8 @@
       "source_url": "https://www.rcsb.org/fasta/entry/5ZIH/download",
       "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation. Chrimson K176R calibration seed removed pending full-reference numbering resolution.",
       "starting_lambda_nm": 590,
-      "pocket_map_path": "pocket_maps/Chrimson_5ZIH_structure.json"
+      "pocket_map_path": "pocket_maps/Chrimson_5ZIH_structure.json",
+      "plm_predictions_path": "plm_predictions/Chrimson_5ZIH_structure.json"
     },
     {
       "name": "GtACR1_6CSM_structure",
@@ -194,7 +197,8 @@
       "source_url": "https://www.rcsb.org/fasta/entry/6CSM/download",
       "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
       "starting_lambda_nm": 515,
-      "pocket_map_path": "pocket_maps/GtACR1_6CSM_structure.json"
+      "pocket_map_path": "pocket_maps/GtACR1_6CSM_structure.json",
+      "plm_predictions_path": "plm_predictions/GtACR1_6CSM_structure.json"
     },
     {
       "name": "CaRhGC_full",
@@ -215,7 +219,8 @@
       "source_id": "A0A1Y2HLQ0",
       "source_header": "tr|A0A1Y2HLQ0|A0A1Y2HLQ0_9FUNG Guanylate cyclase domain-containing protein OS=Catenaria anguillulae PL171 OX=765915 GN=BCR44DRAFT_1436942 PE=3 SV=1",
       "source_url": "https://rest.uniprot.org/uniprotkb/A0A1Y2HLQ0.fasta",
-      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation."
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "plm_predictions_path": "plm_predictions/CaRhGC_full.json"
     }
   ]
 }

@@ -1,0 +1,77 @@
+{
+  "scaffold_name": "BR_Hsal_BACR",
+  "sequence_sha256": "78c26b0b585d83693169b264daabcc735decfefc8ad7c922e03be7fbf0a74c1a",
+  "model_id": "mock",
+  "predictions": [
+    {
+      "position": 95,
+      "from_aa": "R",
+      "to_aa": "Q",
+      "log_likelihood_delta": -4.0278,
+      "model_id": "mock"
+    },
+    {
+      "position": 98,
+      "from_aa": "D",
+      "to_aa": "E",
+      "log_likelihood_delta": 0.253,
+      "model_id": "mock"
+    },
+    {
+      "position": 98,
+      "from_aa": "D",
+      "to_aa": "N",
+      "log_likelihood_delta": -4.8345,
+      "model_id": "mock"
+    },
+    {
+      "position": 98,
+      "from_aa": "D",
+      "to_aa": "S",
+      "log_likelihood_delta": -2.3104,
+      "model_id": "mock"
+    },
+    {
+      "position": 98,
+      "from_aa": "D",
+      "to_aa": "T",
+      "log_likelihood_delta": -2.3229,
+      "model_id": "mock"
+    },
+    {
+      "position": 98,
+      "from_aa": "D",
+      "to_aa": "V",
+      "log_likelihood_delta": -3.626,
+      "model_id": "mock"
+    },
+    {
+      "position": 109,
+      "from_aa": "D",
+      "to_aa": "N",
+      "log_likelihood_delta": -1.9222,
+      "model_id": "mock"
+    },
+    {
+      "position": 109,
+      "from_aa": "D",
+      "to_aa": "Q",
+      "log_likelihood_delta": -3.6527,
+      "model_id": "mock"
+    },
+    {
+      "position": 229,
+      "from_aa": "K",
+      "to_aa": "A",
+      "log_likelihood_delta": -2.0754,
+      "model_id": "mock"
+    },
+    {
+      "position": 229,
+      "from_aa": "K",
+      "to_aa": "G",
+      "log_likelihood_delta": -2.943,
+      "model_id": "mock"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ class MutablePosition:
     reason: str = ""
     distance_to_retinal: float | None = None  # populated from a pocket map when available
     role: str | None = None                    # e.g. "schiff_base_linkage" for LYR
+    plm_log_likelihood_deltas: dict[str, float] | None = None  # {to_aa: delta} when a PLM set is loaded
 
 
 @dataclass(frozen=True)
@@ -21,6 +22,7 @@ class Mutation:
     reason: str = ""
     distance_to_retinal: float | None = None
     role: str | None = None
+    plm_log_likelihood_delta: float | None = None
 
     @property
     def label(self) -> str:
@@ -38,6 +40,7 @@ class Scaffold:
     mutable_positions: list[MutablePosition] = field(default_factory=list)
     starting_lambda_nm: float | None = None
     pocket_map_path: str | None = None
+    plm_predictions_path: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def residue_at(self, position: int) -> str:
