@@ -3,80 +3,80 @@
     {
       "name": "BR_Hsal_BACR_literature_seed",
       "scaffold": "BR_Hsal_BACR",
-      "source": "BR calibration seeds: PMID:7819500; DOI:10.1006/jmbi.1997.1204; DOI:10.4161/bioe.21048; DOI:10.1021/bi00226a016; DOI:10.3390/ijms150202516",
+      "source": "BR calibration seeds: PMID:7819500; DOI:10.1006/jmbi.1997.1204; DOI:10.4161/bioe.21048; DOI:10.1021/bi00226a016; DOI:10.3390/ijms150202516; full-sequence indexing shift +13 applied for UniProt P02945.",
       "known_useful": [
         {
           "label": "D85N",
           "mutations": [
             {
-              "position": 85,
+              "position": 98,
               "to": "N"
             }
           ],
-          "note": "D85N red-shift / inverted proton translocation evidence",
+          "note": "D85N red-shift / inverted proton translocation evidence Full-sequence index used for pipeline matching; mature BR mapping 85->98.",
           "delta_lambda_nm": 35
         },
         {
           "label": "D85T",
           "mutations": [
             {
-              "position": 85,
+              "position": 98,
               "to": "T"
             }
           ],
-          "note": "D85T red-shift / chloride and proton transport mode change",
+          "note": "D85T red-shift / chloride and proton transport mode change Full-sequence index used for pipeline matching; mature BR mapping 85->98.",
           "delta_lambda_nm": 35
         },
         {
           "label": "D85S",
           "mutations": [
             {
-              "position": 85,
+              "position": 98,
               "to": "S"
             }
           ],
-          "note": "D85S red-shift to about 609 nm in BR mutant study",
+          "note": "D85S red-shift to about 609 nm in BR mutant study Full-sequence index used for pipeline matching; mature BR mapping 85->98.",
           "delta_lambda_nm": 41
         },
         {
           "label": "D85V",
           "mutations": [
             {
-              "position": 85,
+              "position": 98,
               "to": "V"
             }
           ],
-          "note": "D85V slight blue shift in BR mutant study",
+          "note": "D85V slight blue shift in BR mutant study Full-sequence index used for pipeline matching; mature BR mapping 85->98.",
           "delta_lambda_nm": -5
         },
         {
           "label": "D85N_D96N",
           "mutations": [
             {
-              "position": 85,
+              "position": 98,
               "to": "N"
             },
             {
-              "position": 96,
+              "position": 109,
               "to": "N"
             }
           ],
-          "note": "double mutant with altered spectral and transport behavior",
+          "note": "double mutant with altered spectral and transport behavior Full-sequence index used for pipeline matching; mature BR mapping 85->98, 96->109.",
           "delta_lambda_nm": 30
         },
         {
           "label": "D85E_D96Q",
           "mutations": [
             {
-              "position": 85,
+              "position": 98,
               "to": "E"
             },
             {
-              "position": 96,
+              "position": 109,
               "to": "Q"
             }
           ],
-          "note": "photochromic BR mutant used for Q photoproduct characterization"
+          "note": "photochromic BR mutant used for Q photoproduct characterization Full-sequence index used for pipeline matching; mature BR mapping 85->98, 96->109."
         }
       ],
       "known_neutral": [
@@ -84,21 +84,21 @@
           "label": "D96N",
           "mutations": [
             {
-              "position": 96,
+              "position": 109,
               "to": "N"
             }
           ],
-          "note": "proton donor mutation; useful as non-pocket functional control for scoring"
+          "note": "proton donor mutation; useful as non-pocket functional control for scoring Full-sequence index used for pipeline matching; mature BR mapping 96->109."
         },
         {
           "label": "R82Q",
           "mutations": [
             {
-              "position": 82,
+              "position": 95,
               "to": "Q"
             }
           ],
-          "note": "pH/pumping mutant control from BR purification and pH-dependence literature"
+          "note": "pH/pumping mutant control from BR purification and pH-dependence literature Full-sequence index used for pipeline matching; mature BR mapping 82->95."
         }
       ],
       "known_disruptive": [
@@ -106,21 +106,21 @@
           "label": "K216A",
           "mutations": [
             {
-              "position": 216,
+              "position": 229,
               "to": "A"
             }
           ],
-          "note": "retinal Schiff-base lysine substitution; expected chromophore-binding disruption"
+          "note": "retinal Schiff-base lysine substitution; expected chromophore-binding disruption Full-sequence index used for pipeline matching; mature BR mapping 216->229."
         },
         {
           "label": "K216G",
           "mutations": [
             {
-              "position": 216,
+              "position": 229,
               "to": "G"
             }
           ],
-          "note": "retinal Schiff-base lysine substitution; expected chromophore-binding disruption"
+          "note": "retinal Schiff-base lysine substitution; expected chromophore-binding disruption Full-sequence index used for pipeline matching; mature BR mapping 216->229."
         }
       ]
     },
@@ -302,25 +302,6 @@
           "note": "central-gate / conductance pathway perturbation control"
         }
       ]
-    },
-    {
-      "name": "Chrimson_5ZIH_structure_literature_seed",
-      "scaffold": "Chrimson_5ZIH_structure",
-      "source": "Chrimson calibration seed: DOI:10.1038/s41467-018-06421-9; numbering requires review against scaffold sequence.",
-      "known_useful": [
-        {
-          "label": "K176R",
-          "mutations": [
-            {
-              "position": 176,
-              "to": "R"
-            }
-          ],
-          "note": "ChrimsonR-style red-shifted / optogenetic tool variant, numbering requires review"
-        }
-      ],
-      "known_neutral": [],
-      "known_disruptive": []
     }
   ]
 }

@@ -16,14 +16,14 @@
       "protected_positions": [],
       "mutable_positions": [
         {
-          "position": 82,
+          "position": 95,
           "allowed": [
             "Q"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket counterion spectral_tuning proton_pumping literature_calibration mature_R82"
         },
         {
-          "position": 85,
+          "position": 98,
           "allowed": [
             "E",
             "N",
@@ -31,30 +31,30 @@
             "T",
             "V"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket primary_counterion spectral_tuning proton_pumping literature_calibration mature_D85"
         },
         {
-          "position": 96,
+          "position": 109,
           "allowed": [
             "N",
             "Q"
           ],
-          "reason": "literature_calibration"
+          "reason": "photocycle proton_donor spectral_tuning literature_calibration mature_D96"
         },
         {
-          "position": 216,
+          "position": 229,
           "allowed": [
             "A",
             "G"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket schiff_base spectral_tuning chromophore_binding literature_calibration mature_K216"
         }
       ],
       "source_db": "UniProt",
       "source_id": "P02945",
       "source_header": "sp|P02945|BACR_HALSA Bacteriorhodopsin OS=Halobacterium salinarum (strain ATCC 700922 / JCM 11081 / NRC-1) OX=64091 GN=bop PE=1 SV=2",
       "source_url": "https://rest.uniprot.org/uniprotkb/P02945.fasta",
-      "notes": "Calibration scaffold for bacteriorhodopsin literature mutants."
+      "notes": "Calibration scaffold for bacteriorhodopsin literature mutants. Calibration positions use full UniProt indexing; mature BR labels are shifted by +13 (R82->95, D85->98, D96->109, K216->229)."
     },
     {
       "name": "ChR2_Cre_full",
@@ -77,14 +77,14 @@
           "allowed": [
             "A"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket central_gate photocurrent spectral_tuning literature_calibration"
         },
         {
           "position": 120,
           "allowed": [
             "A"
           ],
-          "reason": "literature_calibration"
+          "reason": "ion_pathway photocurrent literature_calibration"
         },
         {
           "position": 123,
@@ -92,7 +92,7 @@
             "A",
             "T"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket spectral_tuning photocurrent literature_calibration"
         },
         {
           "position": 128,
@@ -101,14 +101,14 @@
             "S",
             "T"
           ],
-          "reason": "literature_calibration"
+          "reason": "dc_gate retinal_pocket photocurrent kinetics literature_calibration"
         },
         {
           "position": 132,
           "allowed": [
             "C"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket photocurrent calcium_permeability literature_calibration"
         },
         {
           "position": 134,
@@ -116,7 +116,7 @@
             "K",
             "R"
           ],
-          "reason": "literature_calibration"
+          "reason": "photocurrent expression kinetics literature_calibration"
         },
         {
           "position": 156,
@@ -124,7 +124,7 @@
             "A",
             "H"
           ],
-          "reason": "literature_calibration"
+          "reason": "dc_gate retinal_pocket photocurrent kinetics literature_calibration"
         },
         {
           "position": 159,
@@ -132,14 +132,14 @@
             "C",
             "S"
           ],
-          "reason": "literature_calibration"
+          "reason": "photocurrent expression kinetics literature_calibration"
         },
         {
           "position": 257,
           "allowed": [
             "A"
           ],
-          "reason": "literature_calibration"
+          "reason": "retinal_pocket schiff_base spectral_tuning chromophore_binding literature_calibration"
         }
       ],
       "source_db": "UniProt",
@@ -162,20 +162,12 @@
         "patch_clamp"
       ],
       "protected_positions": [],
-      "mutable_positions": [
-        {
-          "position": 176,
-          "allowed": [
-            "R"
-          ],
-          "reason": "literature_calibration"
-        }
-      ],
+      "mutable_positions": [],
       "source_db": "RCSB",
       "source_id": "5ZIH",
       "source_header": "5ZIH_1|Chains A, B|Sensory opsin A,Chrimson|Chlamydomonas reinhardtii (3055)",
       "source_url": "https://www.rcsb.org/fasta/entry/5ZIH/download",
-      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation.",
+      "notes": "Seed scaffold sequence. Mutable/protected positions require alignment and numbering review before candidate generation. Chrimson K176R calibration seed removed pending full-reference numbering resolution.",
       "starting_lambda_nm": 590
     },
     {
