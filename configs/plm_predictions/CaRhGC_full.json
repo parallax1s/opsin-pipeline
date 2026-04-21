@@ -1,6 +1,6 @@
 {
   "scaffold_name": "CaRhGC_full",
   "sequence_sha256": "9359e60fa711b03bde9cbfcf86889a9f1b520e959c5964983842820f4b1b57af",
-  "model_id": "mock",
+  "model_id": "esm2_t12_35M_UR50D",
   "predictions": []
 }

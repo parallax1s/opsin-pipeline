@@ -1,6 +1,6 @@
 {
   "scaffold_name": "GtACR1_6CSM_structure",
   "sequence_sha256": "d836838d94abd72f94a1a742b22580cf6a4d1b9c00c080f398310769f56dc9fc",
-  "model_id": "mock",
+  "model_id": "esm2_t12_35M_UR50D",
   "predictions": []
 }
